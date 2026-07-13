@@ -34,7 +34,7 @@ namespace {
 class TargetDirectX : public DComputeTarget {
 public:
   TargetDirectX(llvm::LLVMContext &c, int smVersion)
-      : DComputeTarget(c, smVersion, ID::DirectX, "directx", "ll",
+      : DComputeTarget(c, smVersion, ID::DirectX, "directx", "dxil",
                        createDirectXABI(),
                        // Private, Global, Shared, Constant, Generic
                        // Shared → addrspace(3) (Clang group_shared / DXIL)
