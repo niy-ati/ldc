@@ -17,8 +17,9 @@
 using namespace dmd;
 
 /// ABI for DirectX / DXIL dcompute kernels.
-/// Calling convention stays C; kernel marking is via HLSL function attributes
-/// (see targetDirectX.cpp), not a special LLVM CC.
+/// Calling convention stays C. The synthesised *_kernel wrapper is the
+/// compute entry (HLSL attrs); the D @kernel body is a plain callee — same
+/// split as SPIRVVulkanTargetABI (core = SPIR_FUNC, wrapper = entry).
 struct DirectXTargetABI : TargetABI {
   DComputePointerRewrite pointerRewite;
 

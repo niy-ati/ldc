@@ -7,23 +7,36 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// DirectX / DXIL dcompute backend scaffold.
-// Metadata style mirrors Vulkan (HLSL function attrs) + DXIL compute triple,
-// per Clang CodeGenHLSL / llvm/test/CodeGen/DirectX requirements.
+// DirectX / DXIL dcompute backend.
+//
+// Metadata: HLSL function attrs + dxil-pc-shadermodel*-compute triple
+// (Clang CodeGenHLSL / llvm/test/CodeGen/DirectX).
+//
+// Kernel ABI (aligned with Vulkan dcompute): the D @kernel is lowered as a
+// "core" function; a zero-arg wrapper entry (*_kernel) carries hlsl.* attrs
+// and loads packed arguments via llvm.dx.resource.handlefrombinding /
+// getpointer from a dx.RawBuffer — same shape as Vulkan's
+// spirv.VulkanBuffer + llvm.spv.resource.* path. Binding layout / final ABI
+// details may still track the ongoing Vulkan ABI design.
 //
 //===----------------------------------------------------------------------===//
 
 #if LDC_LLVM_SUPPORTED_TARGET_DirectX
 
 #include "dmd/expression.h"
+#include "dmd/mangle.h"
 #include "gen/abi/targets.h"
 #include "gen/dcompute/druntime.h"
 #include "gen/dcompute/target.h"
 #include "gen/logger.h"
 #include "gen/optimizer.h"
 #include "gen/to_string.h"
+#include "gen/tollvm.h"
 #include "driver/targetmachine.h"
 #include "llvm/IR/Attributes.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Intrinsics.h"
 #include "llvm/Target/TargetMachine.h"
 #include <string>
 
@@ -70,7 +83,6 @@ public:
     auto b = llvm::AttrBuilder(ctx);
     b.addAttribute("hlsl.shader", "compute");
 
-    // @kernel(size_t[3] bounds) — first struct field is the array literal.
     std::string numthreads = "1,1,1";
     if (kernAttr && kernAttr->elements && kernAttr->elements->length > 0) {
       if (auto *ale = (*kernAttr->elements)[0]->isArrayLiteralExp()) {
@@ -85,18 +97,99 @@ public:
       }
     }
     b.addAttribute("hlsl.numthreads", numthreads);
-
-    // Present in LLVM DirectX fixtures before dxil-prepare; harmless for IR
-    // inspection. Passes may strip it later.
     b.addAttribute("exp-shader", "cs");
     return b;
   }
 
-  void addKernelMetadata(FuncDeclaration *df, llvm::Function *llf,
+  /// Zero-arg compute entry; HLSL attrs live here (not on the D core fn).
+  llvm::Function *buildWrapper(FuncDeclaration *fd) {
+    auto *fty =
+        llvm::FunctionType::get(llvm::Type::getVoidTy(ctx), {}, false);
+    auto name = llvm::Twine(mangleExact(fd)) + llvm::Twine("_kernel");
+    return llvm::Function::Create(fty, llvm::GlobalValue::ExternalLinkage, name,
+                                  _ir->module);
+  }
+
+  /// Pack core parameter types into a struct (pointers → i32/i64), like Vulkan.
+  llvm::StructType *buildArgStruct(llvm::Function *llf, llvm::StringRef name) {
+    llvm::FunctionType *tf = llf->getFunctionType();
+    llvm::SmallVector<llvm::Type *, 8> fields;
+    fields.reserve(tf->getNumParams());
+    const unsigned ptrBits =
+        _ir->module.getDataLayout().getPointerSizeInBits();
+    for (unsigned i = 0; i < tf->getNumParams(); ++i) {
+      llvm::Type *t = tf->getParamType(i);
+      if (t->isPointerTy())
+        t = (ptrBits == 32) ? getI32Type() : getI64Type();
+      fields.push_back(t);
+    }
+    return llvm::StructType::create(ctx, fields, name);
+  }
+
+  /// dx.RawBuffer of the arg struct — DirectX analogue of spirv.VulkanBuffer.
+  /// Int params: IsWriteable=0, IsROV=0 (read-only structured buffer of args).
+  llvm::TargetExtType *buildArgResourceType(llvm::Type *argStruct) {
+    return llvm::TargetExtType::get(ctx, "dx.RawBuffer", {argStruct}, {0, 0});
+  }
+
+  llvm::Value *buildIntrinsicCall(llvm::IRBuilder<> &builder,
+                                  llvm::StringRef dbg, llvm::StringRef name,
+                                  llvm::ArrayRef<llvm::Type *> types,
+                                  llvm::ArrayRef<llvm::Value *> args) {
+    llvm::Function *intrinsic = llvm::Intrinsic::getOrInsertDeclaration(
+        &_ir->module, llvm::Intrinsic::lookupIntrinsicID(name), types);
+    return builder.CreateCall(intrinsic->getFunctionType(), intrinsic, args,
+                              dbg);
+  }
+
+  void addKernelMetadata(FuncDeclaration *fd, llvm::Function *llf,
                          StructLiteralExp *kernAttr) override {
-    (void)df;
-    // Same HLSL-shaped attrs as Vulkan's buildKernAttrs — required by DXIL.
-    llf->addFnAttrs(buildKernAttrs(kernAttr));
+    // Mirror Vulkan: attrs + resource loads on a wrapper; D body stays "core".
+    llvm::Function *wrapper = buildWrapper(fd);
+    wrapper->addFnAttrs(buildKernAttrs(kernAttr));
+
+    auto *bb = llvm::BasicBlock::Create(ctx, "", wrapper);
+    llvm::IRBuilder<> builder(ctx);
+    builder.SetInsertPoint(bb);
+
+    llvm::FunctionType *tf = llf->getFunctionType();
+    llvm::SmallVector<llvm::Value *, 8> callArgs;
+    callArgs.reserve(tf->getNumParams());
+
+    if (tf->getNumParams() != 0) {
+      auto argName = (llvm::Twine(mangleExact(fd)) + "_args").str();
+      llvm::StructType *argStruct = buildArgStruct(llf, argName);
+      llvm::TargetExtType *resTy = buildArgResourceType(argStruct);
+
+      llvm::Value *i32zero = llvm::ConstantInt::get(getI32Type(), 0, false);
+      llvm::Value *i32one = llvm::ConstantInt::get(getI32Type(), 1, false);
+      llvm::Value *nameGV = _ir->getCachedStringLiteral(argName, 0);
+
+      // registerSpace=0, rangeLowerBound=0, rangeSize=1, index=0
+      llvm::Value *handle = buildIntrinsicCall(
+          builder, "handle", "llvm.dx.resource.handlefrombinding", {resTy},
+          {i32zero, i32zero, i32one, i32zero, nameGV});
+
+      llvm::Type *ptrTy = llvm::PointerType::get(ctx, /*AddressSpace=*/0);
+      llvm::Value *base = buildIntrinsicCall(
+          builder, "pointer", "llvm.dx.resource.getpointer",
+          {ptrTy, resTy, i32zero->getType()}, {handle, i32zero});
+
+      for (unsigned i = 0; i < tf->getNumParams(); ++i) {
+        llvm::Value *gep = builder.CreateStructGEP(argStruct, base, i);
+        llvm::Type *fieldTy = argStruct->getElementType(i);
+        llvm::Value *loaded = builder.CreateAlignedLoad(
+            fieldTy, gep, _ir->module.getDataLayout().getABITypeAlign(fieldTy),
+            false);
+        llvm::Type *want = tf->getParamType(i);
+        if (want->isPointerTy())
+          loaded = builder.CreateIntToPtr(loaded, want);
+        callArgs.push_back(loaded);
+      }
+    }
+
+    builder.CreateCall(tf, llf, callArgs);
+    builder.CreateRetVoid();
   }
 };
 
