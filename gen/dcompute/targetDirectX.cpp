@@ -37,6 +37,7 @@
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Intrinsics.h"
+#include "llvm/IR/Metadata.h"
 #include "llvm/Target/TargetMachine.h"
 #include <string>
 
@@ -142,6 +143,25 @@ public:
                               dbg);
   }
 
+  /// Root signature for the arg RawBuffer SRV (t0, space0) on the wrapper entry.
+  void attachArgBufferRootSignature(llvm::Function *wrapper) {
+    llvm::LLVMContext &C = ctx;
+    auto mdI32 = [&](int64_t v) {
+      return llvm::ConstantAsMetadata::get(llvm::ConstantInt::get(
+          getI32Type(), static_cast<uint64_t>(v), true));
+    };
+    llvm::Metadata *srvRange = llvm::MDNode::get(
+        C, {llvm::MDString::get(C, "SRV"), mdI32(1), mdI32(0), mdI32(0),
+            mdI32(-1), mdI32(0)});
+    llvm::Metadata *descTable = llvm::MDNode::get(
+        C, {llvm::MDString::get(C, "DescriptorTable"), mdI32(0), srvRange});
+    llvm::Metadata *elements = llvm::MDNode::get(C, {descTable});
+    llvm::Metadata *rsDef = llvm::MDNode::get(
+        C, {llvm::ValueAsMetadata::get(wrapper), elements, mdI32(2)});
+    _ir->module.getOrInsertNamedMetadata("dx.rootsignatures")
+        ->addOperand(llvm::cast<llvm::MDNode>(rsDef));
+  }
+
   void addKernelMetadata(FuncDeclaration *fd, llvm::Function *llf,
                          StructLiteralExp *kernAttr) override {
     // Mirror Vulkan: attrs + resource loads on a wrapper; D body stays "core".
@@ -157,6 +177,7 @@ public:
     callArgs.reserve(tf->getNumParams());
 
     if (tf->getNumParams() != 0) {
+      attachArgBufferRootSignature(wrapper);
       auto argName = (llvm::Twine(mangleExact(fd)) + "_args").str();
       llvm::StructType *argStruct = buildArgStruct(llf, argName);
       llvm::TargetExtType *resTy = buildArgResourceType(argStruct);
