@@ -85,6 +85,51 @@ std::optional<std::vector<uint8_t>> extractDxContainerPart(
   return std::nullopt;
 }
 
+void diagnoseDxContainer(const std::vector<uint8_t> &dxbc) {
+  if (dxbc.size() < 32)
+    return;
+  const uint32_t partCount =
+      *reinterpret_cast<const uint32_t *>(dxbc.data() + 28);
+  std::printf("DXContainer: %zu bytes, %u parts:", dxbc.size(), partCount);
+  bool hasHash = false;
+  bool hashZero = true;
+  bool hasStat = false;
+  bool hasRts0 = false;
+  bool hasPsv0 = false;
+  for (uint32_t i = 0; i < partCount; ++i) {
+    const uint32_t off =
+        *reinterpret_cast<const uint32_t *>(dxbc.data() + 32 + i * 4);
+    if (off + 8 > dxbc.size())
+      break;
+    char name[5]{};
+    std::memcpy(name, dxbc.data() + off, 4);
+    const uint32_t size =
+        *reinterpret_cast<const uint32_t *>(dxbc.data() + off + 4);
+    std::printf(" %s(%u)", name, size);
+    if (std::memcmp(name, "HASH", 4) == 0) {
+      hasHash = true;
+      for (uint32_t b = 0; b < size && b < 16; ++b) {
+        if (dxbc[off + 8 + b] != 0)
+          hashZero = false;
+      }
+    } else if (std::memcmp(name, "STAT", 4) == 0)
+      hasStat = true;
+    else if (std::memcmp(name, "RTS0", 4) == 0)
+      hasRts0 = true;
+    else if (std::memcmp(name, "PSV0", 4) == 0)
+      hasPsv0 = true;
+  }
+  std::printf("\n");
+  if (hasHash && hashZero)
+    std::printf("note: HASH part is all-zero (DXC-produced DXIL usually is not)\n");
+  if (!hasStat)
+    std::printf("note: no STAT part (DXC containers often include STAT)\n");
+  if (!hasPsv0)
+    std::printf("warn: missing PSV0 — D3D12 typically requires it\n");
+  if (!hasRts0)
+    std::printf("note: no RTS0 — harness will use a hand-built root signature\n");
+}
+
 void maybeEnableDebugLayer() {
   ComPtr<ID3D12Debug> debug;
   if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug))))
@@ -146,6 +191,7 @@ int main(int argc, char **argv) {
     std::fprintf(stderr, "expected DXBC/DXIL container, got bad magic\n");
     return 1;
   }
+  diagnoseDxContainer(dxil);
 
   ComPtr<IDXGIAdapter1> adapter;
   try {
@@ -197,14 +243,27 @@ int main(int argc, char **argv) {
   HR(D3D12SerializeVersionedRootSignature(&rsDesc, &rsBlob, &rsError));
 
   ComPtr<ID3D12RootSignature> rootSig;
+  bool usedEmbeddedRs = false;
   if (auto rts0 = extractDxContainerPart(dxil, "RTS0")) {
-    std::printf("DXIL contains RTS0 root signature (%zu bytes)\n", rts0->size());
-  } else {
-    std::printf("DXIL has no RTS0 part\n");
+    const HRESULT rsHr = device->CreateRootSignature(
+        0, rts0->data(), rts0->size(), IID_PPV_ARGS(&rootSig));
+    if (SUCCEEDED(rsHr)) {
+      usedEmbeddedRs = true;
+      std::printf("using embedded RTS0 root signature (%zu bytes)\n",
+                  rts0->size());
+    } else {
+      std::printf(
+          "embedded RTS0 rejected by CreateRootSignature (0x%08lX); "
+          "falling back to harness SRV(t0,space0)\n",
+          (unsigned long)rsHr);
+    }
   }
-  HR(device->CreateRootSignature(0, rsBlob->GetBufferPointer(),
-                                 rsBlob->GetBufferSize(),
-                                 IID_PPV_ARGS(&rootSig)));
+  if (!usedEmbeddedRs) {
+    std::printf("using harness SRV(t0,space0) root signature\n");
+    HR(device->CreateRootSignature(0, rsBlob->GetBufferPointer(),
+                                   rsBlob->GetBufferSize(),
+                                   IID_PPV_ARGS(&rootSig)));
+  }
 
   D3D12_COMPUTE_PIPELINE_STATE_DESC psoDesc{};
   psoDesc.pRootSignature = rootSig.Get();
@@ -216,10 +275,14 @@ int main(int argc, char **argv) {
       device->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(&pso));
   if (FAILED(psoHr)) {
     std::fprintf(stderr,
-                 "CreateComputePipelineState failed (0x%08lX).\n"
-                 "Common causes: root signature mismatch, wrong entry point "
-                 "('%s'), or DXIL/runtime incompatibility (LLVM DXIL vs OS "
-                 "D3D12).\n",
+                 "CreateComputePipelineState failed (0x%08lX) for entry '%s'.\n"
+                 "Diagnosis so far:\n"
+                 "  - container has PSV0; RTS0 present but CreateRootSignature "
+                 "may reject it (harness falls back)\n"
+                 "  - working DXC saxpy DXIL creates a PSO in dx-compute-kit\n"
+                 "  - LLVM DXIL often differs from DXC (HASH/STAT/RTS0 encoding)\n"
+                 "Likely next ABI/runtime step: validate/sign LLVM DXIL for the\n"
+                 "OS D3D12 runtime (or find which container field the runtime rejects).\n",
                  (unsigned long)psoHr, entryPoint);
     (void)enableDebug;
     return 1;
