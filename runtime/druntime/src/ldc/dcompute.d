@@ -93,6 +93,13 @@ struct Pointer(AddrSpace as, T)
 {
     T* ptr;
     alias ptr this;
+
+    // Keep the address-space-qualified pointer type under arithmetic.
+    // `alias this` alone makes `p + n` decay to a plain `T*`.
+    Pointer opBinary(string op)(ptrdiff_t offset) if (op == "+")
+    {
+        return typeof(this)(ptr + offset);
+    }
 }
 
 struct Variable(AddrSpace as, T)
