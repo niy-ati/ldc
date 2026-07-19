@@ -1,38 +1,34 @@
 # DirectX dcompute smoke harness
 
-Minimal C++ D3D12 host for **LDC-generated** DXIL — used to debug the
-provisional arg-buffer ABI before committing to it.
+Minimal C++ D3D12 host for **LDC-generated** DXIL.
 
-## What it does
+## Current ABI (`targetDirectX.cpp`)
 
-1. Compile `harness_kernel.d` with `ldc2 -mdcompute-targets=directx-660`
-2. Prefer the embedded **RTS0** root signature (SRV t0 / space0)
-3. Pack `{ u32 outputGpuVa }` into the arg buffer and dispatch `*_kernel`
-4. Readback and check `output[0] == 42` when PSO creation succeeds
+`*_kernel` writes through **UAV RawBuffer u0** (`handlefrombinding` + `getpointer`).
+Cores are AlwaysInline + mem2reg so stores lower to `rawBufferStore`.
+Module emits `!dx.valver = {1,8}` so Microsoft `dxv` accepts PSV v3.
+
+## Required host pipeline
+
+1. Compile: `ldc2 -mdcompute-targets=directx-660`
+2. `dxv kernel.dxil` must succeed
+3. **Sign:** `dxv -o=signed.dxil kernel.dxil` (LLVM leaves container header hash zero)
+4. Hand-built **UAV(u0)** root-sig (LLVM `RTS0` is rejected by `CreateRootSignature`)
+5. Prefer **`--warp`** — on this NVIDIA box, hardware `CreateCPS` crashes on signed LLVM DXIL even when WARP succeeds
 
 ## Build / run
 
 ```powershell
-cmake -B build -G "Visual Studio 17 2022" -A x64
-cmake --build build --config Release
-.\run.ps1 -Ldc2 C:\ldc-build\bin\ldc2.exe
+.\run.ps1 -Ldc2 C:\ldc-build\bin\ldc2.exe           # WARP (default) — E2E verify 42
+.\run.ps1 -Ldc2 C:\ldc-build\bin\ldc2.exe -Hardware # NVIDIA (may crash CreateCPS)
 ```
 
-## Current failure mode (reportable)
+## Status
 
-`CreateComputePipelineState` returns `E_INVALIDARG` for LDC DXIL on this box.
-
-Compared to a working DXC saxpy DXIL:
-
-| | LDC harness DXIL | DXC saxpy (works) |
-|--|------------------|-------------------|
-| PSV0 | present, entry = `*_kernel`, threads 8,1,1 | present, entry = `main` |
-| RTS0 | present (SRV table) | usually none (host builds RS) |
-| HASH | **all-zero** | non-zero |
-| STAT | **missing** | present |
-
-So the gap is currently **LLVM DXIL container / runtime acceptance**, not the
-arg-buffer packing logic (that path never runs until PSO succeeds).
-
-Next iteration: get LDC DXIL past `CreateComputePipelineState` (validator /
-hash / container fields), then debug the `f(*args)` unpacking.
+| Step | Result |
+|------|--------|
+| dxv on fresh LDC DXIL | pass |
+| dxv -o sign | pass |
+| CreateCPS + dispatch on WARP | pass (`output[0]==42`) |
+| CreateCPS on NVIDIA HW | crash inside CreateCPS (open) |
+| LLVM RTS0 | CreateRootSignature fails — ignore |

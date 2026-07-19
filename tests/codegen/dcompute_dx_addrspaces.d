@@ -1,5 +1,6 @@
 // DirectX dcompute address-space mapping (Shared → AS 3, matching Clang groupshared).
-// See gen/dcompute/targetDirectX.cpp mapping {{0, 1, 3, 2, 0}}.
+// Global → AS0: DX buffer ops use resource getpointer (default AS), not CUDA AS1.
+// See gen/dcompute/targetDirectX.cpp mapping {{0, 0, 3, 2, 0}}.
 //
 // REQUIRES: target_DirectX
 // RUN: %ldc -c -m64 -mdcompute-targets=directx-660 -mdcompute-file-prefix=dx_as -output-ll -output-o %s
@@ -9,7 +10,7 @@
 import ldc.dcompute;
 
 // LL: %"ldc.dcompute.Pointer!(AddrSpace.Private, float).Pointer" = type { ptr }
-// LL: %"ldc.dcompute.Pointer!(AddrSpace.Global, float).Pointer" = type { ptr addrspace(1) }
+// LL: %"ldc.dcompute.Pointer!(AddrSpace.Global, float).Pointer" = type { ptr }
 // LL: %"ldc.dcompute.Pointer!(AddrSpace.Shared, float).Pointer" = type { ptr addrspace(3) }
 // LL: %"ldc.dcompute.Pointer!(AddrSpace.Constant, immutable(float)).Pointer" = type { ptr addrspace(2) }
 // LL: %"ldc.dcompute.Pointer!(AddrSpace.Generic, float).Pointer" = type { ptr }
@@ -20,7 +21,7 @@ void foo(PrivatePointer!float f) {
 }
 
 void foo(GlobalPointer!float f) {
-    // LL: load float, ptr addrspace(1)
+    // LL: load float, ptr
     float g = *f;
 }
 

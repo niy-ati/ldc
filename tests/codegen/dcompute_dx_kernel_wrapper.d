@@ -9,17 +9,14 @@
 import ldc.dcompute;
 
 // LL: target triple = "dxil-pc-shadermodel6.6-compute"
+// LL: !dx.valver = !{!{{[0-9]+}}}
 
-// Wrapper entry (zero args) carries HLSL attrs — like Vulkan *_kernel.
+// After AlwaysInliner+mem2reg: wrapper owns getpointer+store (LLVM test shape).
 // LL: define void @{{.*}}_kernel()
 // LL: call {{.*}} @llvm.dx.resource.handlefrombinding
 // LL: call {{.*}} @llvm.dx.resource.getpointer
-// LL: call void @{{.*}}minimal_kernel{{.*}}(
+// LL: store float {{.*}}, ptr
 // LL: ret void
-
-// Core D body keeps the real parameter list.
-// LL: define{{.*}} @{{.*}}minimal_kernel{{.*}}(
-// LL-SAME: ptr addrspace(1)
 
 // LL: attributes #{{[0-9]+}} = { {{.*}}"exp-shader"="cs"{{.*}}"hlsl.numthreads"="8,1,1"{{.*}}"hlsl.shader"="compute"{{.*}} }
 

@@ -7,4 +7,4 @@ if(MSVC)
   target_compile_options(ldc_dx_harness PRIVATE /W4 /permissive-)
 endif()
 
-target_link_libraries(ldc_dx_harness PRIVATE d3d12.lib dxgi.lib)
+target_link_libraries(ldc_dx_harness PRIVATE d3d12.lib dxgi.lib ole32.lib)
