@@ -1,5 +1,6 @@
 param(
     [string]$Ldc2 = "C:\ldc-build\bin\ldc2.exe",
+    [string]$HarnessExe = "C:\ldc-build\bin\ldc_dx_harness.exe",
     [string]$Config = "Release",
     [switch]$Hardware
 )
@@ -10,11 +11,21 @@ Set-Location $here
 
 $dxv = "C:\Users\niyat\AppData\Local\Microsoft\WinGet\Packages\Microsoft.DirectX.ShaderCompiler_Microsoft.Winget.Source_8wekyb3d8bbwe\bin\x64\dxv.exe"
 
-if (-not (Test-Path "build\${Config}\ldc_dx_harness.exe")) {
-    Write-Host "Building harness..."
-    cmake -B build -G "Visual Studio 17 2022" -A x64 | Out-Host
-    cmake --build build --config $Config | Out-Host
+function Ensure-HarnessExe {
+    param([string]$Exe)
+    $main = Join-Path $here "main.cpp"
+    $needsBuild = -not (Test-Path $Exe)
+    if (-not $needsBuild -and (Test-Path $main)) {
+        $needsBuild = (Get-Item $main).LastWriteTimeUtc -gt (Get-Item $Exe).LastWriteTimeUtc
+    }
+    if ($needsBuild) {
+        Write-Host "Building harness host -> $Exe (avoids Device Guard under 'New folder')..."
+        & (Join-Path $here "build_harness.ps1") -OutExe $Exe -MainCpp $main
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    }
 }
+
+Ensure-HarnessExe -Exe $HarnessExe
 
 Write-Host "Compiling harness_kernel.d with LDC..."
 & $Ldc2 -c -m64 -mdcompute-targets=directx-660 -mdcompute-file-prefix=harness `
@@ -39,7 +50,8 @@ if (-not $entryLine) { Write-Error "Could not find *_kernel entry in $ll" }
 $entry = $entryLine.Matches[0].Groups[1].Value
 Write-Host "Entry: $entry"
 
-$exe = Join-Path $here "build\${Config}\ldc_dx_harness.exe"
+$exe = $HarnessExe
+if (-not (Test-Path $exe)) { Write-Error "Missing harness: $exe" }
 $runArgs = @($signed, $entry, "42.0")
 if (-not $Hardware) { $runArgs += "--warp" }
 Write-Host ("Running: {0} {1}" -f $exe, ($runArgs -join ' '))
