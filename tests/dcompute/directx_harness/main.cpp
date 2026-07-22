@@ -5,10 +5,9 @@
 //
 // Prerequisites for CreateCPS:
 //   1. dxv-clean blob (UAV/getpointer + !dx.valver={1,8})
-//   2. signed container header hash:  dxv -o=signed.dxil unsigned.dxil
-//   3. matching UAV root-sig (do not use LLVM RTS0 — CreateRootSignature rejects it)
-//   4. NVIDIA HW needs LLVM DXIL with !llvm.ident + DXC-shaped bitcode (LLVM Target/DirectX).
-//      Use --warp only when debugging without the patched LLVM.
+//   2. signed container: dxv -o=signed.dxil unsigned.dxil
+//   3. UAV root-sig matching u0 (LLVM RTS0 is rejected by CreateRootSignature)
+//   4. patched LLVM DirectX (see packaging/llvm-directx-dxc-parity.patch)
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX

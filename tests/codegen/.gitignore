@@ -1,0 +1,4 @@
+# DirectX dcompute — generated LDC outputs
+dx_*_directx660_64.ll
+dx_*_directx660_64.o
+dx_*_directx660_64.dxil

@@ -40,12 +40,14 @@ The D3D12 host is built to **`C:\ldc-build\bin\ldc_dx_harness.exe`** (same tree 
 `New folder`; if `run.ps1` still fails, build once from an elevated or IT-approved
 shell: `.\build_harness.ps1`, or pass `-HarnessExe` to an allowlisted path.
 
-## Status
+## Status (verified 2026-07-22, RTX 3050 + WARP)
 
 | Step | Result |
 |------|--------|
 | dxv on fresh LDC DXIL | pass |
 | dxv -o sign | pass |
 | CreateCPS + dispatch on WARP | pass (`output[0]==42`) |
-| CreateCPS on NVIDIA HW | pass after LLVM `llvm.ident` + bitcode writer fixes |
-| LLVM RTS0 | CreateRootSignature fails — ignore |
+| CreateCPS on NVIDIA HW | pass with patched LLVM (`packaging/llvm-directx-dxc-parity.patch`) |
+| LLVM RTS0 | CreateRootSignature fails — use hand-built UAV RS in harness |
+
+LLVM patch and rebuild notes: `packaging/README-directx-llvm.txt`.

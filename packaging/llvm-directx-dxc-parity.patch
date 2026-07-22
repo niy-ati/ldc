@@ -1,0 +1,374 @@
+﻿diff --git a/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp b/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp
+index 49a20e2f7..1b1131009 100644
+--- a/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp
++++ b/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp
+@@ -30,6 +30,7 @@
+ #include "llvm/Support/ErrorHandling.h"
+ #include "llvm/Support/VersionTuple.h"
+ #include "llvm/TargetParser/Triple.h"
++#include "llvm/Config/llvm-config.h"
+ #include <cstdint>
+ 
+ using namespace llvm;
+@@ -305,6 +306,17 @@ static void emitValidatorVersionMD(Module &M, const ModuleMetadataInfo &MMDI) {
+   ValVerNode->addOperand(MDNode::get(Ctx, MDVals));
+ }
+ 
++// DXC always emits !llvm.ident; match for D3D12 driver compatibility.
++static void emitLLVMIdentMD(Module &M) {
++  if (M.getNamedMetadata("llvm.ident"))
++    return;
++  LLVMContext &Ctx = M.getContext();
++  std::string Ident = (Twine("llvm (") + LLVM_VERSION_STRING + ")").str();
++  Metadata *Str = MDString::get(Ctx, Ident);
++  M.getOrInsertNamedMetadata("llvm.ident")
++      ->addOperand(MDNode::get(Ctx, Str));
++}
++
+ static void emitShaderModelVersionMD(Module &M,
+                                      const ModuleMetadataInfo &MMDI) {
+   LLVMContext &Ctx = M.getContext();
+@@ -535,6 +547,7 @@ static void translateGlobalMetadata(Module &M, DXILResourceMap &DRM,
+   emitValidatorVersionMD(M, MMDI);
+   emitShaderModelVersionMD(M, MMDI);
+   emitDXILVersionTupleMD(M, MMDI);
++  emitLLVMIdentMD(M);
+   NamedMDNode *NamedResourceMD = emitResourceMetadata(M, DRM, DRTM);
+   auto *ResourceMD =
+       (NamedResourceMD != nullptr) ? NamedResourceMD->getOperand(0) : nullptr;
+diff --git a/llvm/lib/Target/DirectX/DXILWriter/DXILBitcodeWriter.cpp b/llvm/lib/Target/DirectX/DXILWriter/DXILBitcodeWriter.cpp
+index 6f14f7001..40430ee54 100644
+--- a/llvm/lib/Target/DirectX/DXILWriter/DXILBitcodeWriter.cpp
++++ b/llvm/lib/Target/DirectX/DXILWriter/DXILBitcodeWriter.cpp
+@@ -14,6 +14,7 @@
+ #include "DXILValueEnumerator.h"
+ #include "DirectXIRPasses/DXILDebugInfo.h"
+ #include "DirectXIRPasses/PointerTypeAnalysis.h"
++#include "llvm/ADT/DenseSet.h"
+ #include "llvm/ADT/STLExtras.h"
+ #include "llvm/BinaryFormat/Dwarf.h"
+ #include "llvm/Bitcode/BitcodeCommon.h"
+@@ -140,8 +141,9 @@ public:
+                     const DXILDebugInfoMap &DebugInfo)
+       : I8Ty(Type::getInt8Ty(M.getContext())),
+         I8PtrTy(TypedPointerType::get(I8Ty, 0)), Stream(Stream),
+-        StrtabBuilder(StrtabBuilder), M(M), VE(M, I8PtrTy, DebugInfo),
+-        Buffer(Buffer), BitcodeStartBit(Stream.GetCurrentBitNo()),
++        StrtabBuilder(StrtabBuilder), M(M),
++        VE(M, Type::getVoidTy(M.getContext()), DebugInfo), Buffer(Buffer),
++        BitcodeStartBit(Stream.GetCurrentBitNo()),
+         PointerMap(PointerTypeAnalysis::run(M)), DebugInfo(DebugInfo) {
+     GlobalValueId = VE.getValues().size();
+     // Enumerate the typed pointers
+@@ -1080,14 +1082,13 @@ void DXILBitcodeWriter::writeTypeTable() {
+       break;
+     }
+     case Type::PointerTyID: {
+-      // POINTER: [pointee type, address space]
+-      // Emitting an empty struct type for the pointer's type allows this to be
+-      // order-independent. Non-struct types must be emitted in bitcode before
+-      // they can be referenced.
+-      TypeVals.push_back(false);
+-      Code = bitc::TYPE_CODE_OPAQUE;
+-      writeStringRecord(Stream, bitc::TYPE_CODE_STRUCT_NAME,
+-                        "dxilOpaquePtrReservedName", StructNameAbbrev);
++      // DXIL bitcode is typed-pointer; encode opaque pointers as i8*.
++      Code = bitc::TYPE_CODE_POINTER;
++      TypeVals.push_back(getTypeID(Type::getInt8Ty(T->getContext())));
++      unsigned AddressSpace = cast<PointerType>(T)->getAddressSpace();
++      TypeVals.push_back(AddressSpace);
++      if (AddressSpace == 0)
++        AbbrevToUse = PtrAbbrev;
+       break;
+     }
+     case Type::FunctionTyID: {
+@@ -1178,11 +1179,10 @@ void DXILBitcodeWriter::writeValueSymbolTableForwardDecl() {}
+ void DXILBitcodeWriter::writeModuleInfo() {
+   // Emit various pieces of data attached to a module.
+ 
+-  // We need to hardcode a triple and datalayout that's compatible with the
+-  // historical DXIL triple and datalayout from DXC.
++  // DXC DXIL datalayout (see dxc -dumpbin).
+   StringRef Triple = "dxil-ms-dx";
+-  StringRef DL = "e-m:e-p:32:32-i1:32-i8:8-i16:16-i32:32-i64:64-"
+-                 "f16:16-f32:32-f64:64-n8:16:32:64";
++  StringRef DL = "e-m:e-p:32:32-i1:32-i8:32-i16:32-i32:32-i64:64-"
++                 "f16:32-f32:32-f64:64-n8:16:32:64";
+   writeStringRecord(Stream, bitc::MODULE_CODE_TRIPLE, Triple, 0 /*TODO*/);
+   writeStringRecord(Stream, bitc::MODULE_CODE_DATALAYOUT, DL, 0 /*TODO*/);
+ 
+@@ -1813,20 +1813,14 @@ void DXILBitcodeWriter::writeModuleMetadata() {
+   if (!VE.hasMDs() && M.named_metadata_empty())
+     return;
+ 
+-  Stream.EnterSubblock(bitc::METADATA_BLOCK_ID, 5);
+-
+-  // Emit all abbrevs upfront, so that the reader can jump in the middle of the
+-  // block and load any metadata.
+-  std::vector<unsigned> MDAbbrevs;
++  // DXC uses codeLen=3 for the main METADATA_BLOCK.
++  Stream.EnterSubblock(bitc::METADATA_BLOCK_ID, 3);
+ 
+-  MDAbbrevs.resize(MetadataAbbrev::LastPlusOne);
+-  MDAbbrevs[MetadataAbbrev::DILocationAbbrevID] = createDILocationAbbrev();
+-  MDAbbrevs[MetadataAbbrev::GenericDINodeAbbrevID] =
+-      createGenericDINodeAbbrev();
++  SmallVector<uint64_t, 64> Record;
++  writeMetadataStrings(VE.getMDStrings(), Record);
+ 
+   unsigned NameAbbrev = 0;
+   if (!M.named_metadata_empty()) {
+-    // Abbrev for METADATA_NAME.
+     std::shared_ptr<BitCodeAbbrev> Abbv = std::make_shared<BitCodeAbbrev>();
+     Abbv->Add(BitCodeAbbrevOp(bitc::METADATA_NAME));
+     Abbv->Add(BitCodeAbbrevOp(BitCodeAbbrevOp::Array));
+@@ -1834,8 +1828,8 @@ void DXILBitcodeWriter::writeModuleMetadata() {
+     NameAbbrev = Stream.EmitAbbrev(std::move(Abbv));
+   }
+ 
+-  SmallVector<uint64_t, 64> Record;
+-  writeMetadataStrings(VE.getMDStrings(), Record);
++  std::vector<unsigned> MDAbbrevs;
++  MDAbbrevs.resize(MetadataAbbrev::LastPlusOne, 0);
+ 
+   std::vector<uint64_t> IndexPos;
+   IndexPos.reserve(VE.getNonMDStrings().size());
+@@ -1919,21 +1913,68 @@ void DXILBitcodeWriter::writeFunctionMetadataAttachment(const Function &F) {
+ void DXILBitcodeWriter::writeModuleMetadataKinds() {
+   SmallVector<uint64_t, 64> Record;
+ 
+-  // Write metadata kinds
+-  // METADATA_KIND - [n x [id, name]]
++  // METADATA_KIND - [n x [id, name]]. DXC's baseline table is IDs 0..15.
++  static constexpr StringRef DXCBaselineKinds[] = {
++      "dbg",
++      "tbaa",
++      "prof",
++      "fpmath",
++      "range",
++      "tbaa.struct",
++      "invariant.load",
++      "alias.scope",
++      "noalias",
++      "nontemporal",
++      "llvm.mem.parallel_loop_access",
++      "nonnull",
++      "dereferenceable",
++      "dereferenceable_or_null",
++      "dx.dbg.varlayout",
++      "dx.temp",
++  };
++
+   SmallVector<StringRef, 8> Names;
+   M.getMDKindNames(Names);
+ 
+-  if (Names.empty())
+-    return;
++  DenseSet<unsigned> UsedIDs;
++  for (const Function &F : M) {
++    for (const BasicBlock &BB : F) {
++      for (const Instruction &I : BB) {
++        SmallVector<std::pair<unsigned, MDNode *>, 4> MDs;
++        I.getAllMetadata(MDs);
++        for (const auto &MD : MDs)
++          UsedIDs.insert(MD.first);
++      }
++    }
++  }
+ 
+   Stream.EnterSubblock(bitc::METADATA_BLOCK_ID, 3);
+ 
+-  for (unsigned MDKindID = 0, e = Names.size(); MDKindID != e; ++MDKindID) {
+-    Record.push_back(MDKindID);
+-    StringRef KName = Names[MDKindID];
++  for (unsigned ID = 0; ID < std::size(DXCBaselineKinds); ++ID) {
++    Record.push_back(ID);
++    StringRef KName = DXCBaselineKinds[ID];
+     Record.append(KName.begin(), KName.end());
++    Stream.EmitRecord(bitc::METADATA_KIND, Record, 0);
++    Record.clear();
++  }
+ 
++  for (unsigned MDKindID : UsedIDs) {
++    if (MDKindID < std::size(DXCBaselineKinds))
++      continue;
++    if (MDKindID >= Names.size())
++      continue;
++    StringRef KName = Names[MDKindID];
++    bool InBaseline = false;
++    for (StringRef Base : DXCBaselineKinds) {
++      if (KName == Base) {
++        InBaseline = true;
++        break;
++      }
++    }
++    if (InBaseline)
++      continue;
++    Record.push_back(MDKindID);
++    Record.append(KName.begin(), KName.end());
+     Stream.EmitRecord(bitc::METADATA_KIND, Record, 0);
+     Record.clear();
+   }
+@@ -2946,11 +2987,9 @@ void DXILBitcodeWriter::write() {
+   // Emit constants.
+   writeModuleConstants();
+ 
+-  // Emit metadata.
+-  writeModuleMetadataKinds();
+-
+-  // Emit metadata.
++  // Emit metadata. DXC writes named MD first, then the KIND table.
+   writeModuleMetadata();
++  writeModuleMetadataKinds();
+ 
+   // Emit names for globals/functions etc.
+   // DXIL uses the same format for module-level value symbol table as for the
+diff --git a/llvm/lib/Target/DirectX/DXILWriter/DXILValueEnumerator.cpp b/llvm/lib/Target/DirectX/DXILWriter/DXILValueEnumerator.cpp
+index 8e4629717..215f60768 100644
+--- a/llvm/lib/Target/DirectX/DXILWriter/DXILValueEnumerator.cpp
++++ b/llvm/lib/Target/DirectX/DXILWriter/DXILValueEnumerator.cpp
+@@ -952,7 +952,20 @@ void ValueEnumerator::EnumerateValue(const Value *V) {
+       Comdats.insert(C);
+ 
+   // Enumerate the type of this value.
+-  EnumerateType(V->getType());
++  if (const Function *F = dyn_cast<Function>(V))
++    EnumerateType(
++        TypedPointerType::get(F->getFunctionType(), F->getAddressSpace()));
++  else if (const GlobalVariable *GV = dyn_cast<GlobalVariable>(V))
++    EnumerateType(
++        TypedPointerType::get(GV->getValueType(), GV->getAddressSpace()));
++  else if (const GlobalAlias *GA = dyn_cast<GlobalAlias>(V))
++    EnumerateType(
++        TypedPointerType::get(GA->getValueType(), GA->getAddressSpace()));
++  else if (const GlobalIFunc *GIF = dyn_cast<GlobalIFunc>(V))
++    EnumerateType(
++        TypedPointerType::get(GIF->getValueType(), GIF->getAddressSpace()));
++  else
++    EnumerateType(V->getType());
+ 
+   if (const Constant *C = dyn_cast<Constant>(V)) {
+     if (isa<GlobalValue>(C)) {
+@@ -991,6 +1004,10 @@ void ValueEnumerator::EnumerateValue(const Value *V) {
+ }
+ 
+ void ValueEnumerator::EnumerateType(Type *Ty) {
++  if (Ty->isPointerTy())
++    Ty = TypedPointerType::get(Type::getInt8Ty(Ty->getContext()),
++                               cast<PointerType>(Ty)->getAddressSpace());
++
+   unsigned *TypeID = &TypeMap[Ty];
+ 
+   // We've already seen this type.
+@@ -1029,7 +1046,14 @@ void ValueEnumerator::EnumerateType(Type *Ty) {
+ // Enumerate the types for the specified value.  If the value is a constant,
+ // walk through it, enumerating the types of the constant.
+ void ValueEnumerator::EnumerateOperandType(const Value *V) {
+-  EnumerateType(V->getType());
++  if (const Function *F = dyn_cast<Function>(V))
++    EnumerateType(
++        TypedPointerType::get(F->getFunctionType(), F->getAddressSpace()));
++  else if (const GlobalVariable *GV = dyn_cast<GlobalVariable>(V))
++    EnumerateType(
++        TypedPointerType::get(GV->getValueType(), GV->getAddressSpace()));
++  else
++    EnumerateType(V->getType());
+ 
+   assert(!isa<MetadataAsValue>(V) && "Unexpected metadata operand");
+ 
+diff --git a/llvm/test/CodeGen/DirectX/Bitcode/byte.ll b/llvm/test/CodeGen/DirectX/Bitcode/byte.ll
+index c53670a75..8f92baed7 100644
+--- a/llvm/test/CodeGen/DirectX/Bitcode/byte.ll
++++ b/llvm/test/CodeGen/DirectX/Bitcode/byte.ll
+@@ -9,20 +9,20 @@ target triple = "dxil--shadermodel6.5-library"
+ ;; which means this test may be brittle.
+ 
+ ;; See https://llvm.org/docs/BitCodeFormat.html for help interpreting below.
++;;
++;; Opaque pointers are lowered to i8* (not a reserved opaque struct). The type
++;; table is prefixed with void to match DXC's empty-module layout.
+ ;
+ ; CHECK:      <TYPE_BLOCK_ID
+-; CHECK-NEXT:   <NUMENTRY op0=24/>
+-; CHECK-NEXT:   <INTEGER op0=8/>
+-; CHECK-NEXT:   <POINTER {{.*}} op0=0 op1=0/>
+-;; 2: STRUCT_NAME + OPAQUE only take up one index here.
+-; CHECK-NEXT:   <STRUCT_NAME {{.*}}/> record string = 'dxilOpaquePtrReservedName'
+-; CHECK-NEXT:   <OPAQUE op0=0/>
+-;; 3: i8
+-; CHECK-NEXT:   <INTEGER op0=8/>
+-;; 4: [32 x i8]
+-; CHECK-NEXT:   <ARRAY {{.*}} op0=32 op1=3/>
+-;; 5-12: The return and operand types of @bytes, except `i8`,
++; CHECK-NEXT:   <NUMENTRY op0=21/>
+ ; CHECK-NEXT:   <VOID/>
++;; 1: i8 (byte types lower to integer)
++; CHECK-NEXT:   <INTEGER op0=8/>
++;; 2: [32 x i8]
++; CHECK-NEXT:   <ARRAY {{.*}} op0=32 op1=1/>
++;; 3: [32 x i8]*
++; CHECK-NEXT:   <POINTER {{.*}} op0=2 op1=0/>
++;; 4-10: The return and operand types of @bytes, except `i8`,
+ ; CHECK-NEXT:   <INTEGER op0=1/>
+ ; CHECK-NEXT:   <INTEGER op0=3/>
+ ; CHECK-NEXT:   <INTEGER op0=5/>
+@@ -30,29 +30,28 @@ target triple = "dxil--shadermodel6.5-library"
+ ; CHECK-NEXT:   <INTEGER op0=32/>
+ ; CHECK-NEXT:   <INTEGER op0=64/>
+ ; CHECK-NEXT:   <INTEGER op0=128/>
+-;; 13: <8 x i5>
+-; CHECK-NEXT:   <VECTOR op0=8 op1=8/>
+-;; 14: <2 x i64>
+-; CHECK-NEXT:   <VECTOR op0=2 op1=11/>
+-;; 15: void(i1, i3, i5, i8, i16, i32, i64, i128, <8 x i5>, <2 x i64>)
+-; CHECK-NEXT:   <FUNCTION {{.*}} op0=0 op1=5 op2=6 op3=7 op4=8 op5=3 op6=9 op7=10 op8=11 op9=12 op10=13 op11=14/>
++;; 11: <8 x i5>
++; CHECK-NEXT:   <VECTOR op0=8 op1=6/>
++;; 12: <2 x i64>
++; CHECK-NEXT:   <VECTOR op0=2 op1=9/>
++;; 13: void(i1, i3, i5, i8, i16, i32, i64, i128, <8 x i5>, <2 x i64>)
++; CHECK-NEXT:   <FUNCTION {{.*}} op0=0 op1=0 op2=4 op3=5 op4=6 op5=1 op6=7 op7=8 op8=9 op9=10 op10=11 op11=12/>
++; CHECK-NEXT:   <POINTER {{.*}} op0=13 op1=0/>
++;; 15: b32()
++; CHECK-NEXT:   <FUNCTION {{.*}} op0=0 op1=8/>
+ ; CHECK-NEXT:   <POINTER {{.*}} op0=15 op1=0/>
+-;; 17: b32()
++;; 17: b128()
+ ; CHECK-NEXT:   <FUNCTION {{.*}} op0=0 op1=10/>
+ ; CHECK-NEXT:   <POINTER {{.*}} op0=17 op1=0/>
+-;; 19: b128()
+-; CHECK-NEXT:   <FUNCTION {{.*}} op0=0 op1=12/>
+-; CHECK-NEXT:   <POINTER {{.*}} op0=19 op1=0/>
+-; CHECK-NEXT:   <POINTER {{.*}} op0=4 op1=0/>
+ ; CHECK-NEXT:   <METADATA/>
+ ; CHECK-NEXT:   <INTEGER op0=32/>
+ ; CHECK-NEXT: </TYPE_BLOCK_ID>
+ 
+ ;; Sanity check that the globals are coherently ordered.
+-; CHECK:      <GLOBALVAR {{.*}} op0=4
++; CHECK:      <GLOBALVAR {{.*}} op0=2
++; CHECK-NEXT: <FUNCTION op0=13
+ ; CHECK-NEXT: <FUNCTION op0=15
+ ; CHECK-NEXT: <FUNCTION op0=17
+-; CHECK-NEXT: <FUNCTION op0=19
+ 
+ ; CHECK:      <VALUE_SYMTAB
+ ; CHECK-NEXT:   <ENTRY {{.*}} op0=0 {{.*}}/> record string = 'a'
+@@ -71,7 +70,7 @@ define void @bytes(b1 %a, b3 %b, b5 %c, b8 %d, b16 %e, b32 %f, b64 %g, b128 %h,
+ define b32 @constant32() {
+   ; CHECK: <FUNCTION_BLOCK
+   ; CHECK:      <CONSTANTS_BLOCK
+-  ; CHECK-NEXT:   <SETTYPE {{.*}} op0=10/>
++  ; CHECK-NEXT:   <SETTYPE {{.*}} op0=8/>
+   ;; The value here is signed variable-length encoded, so the value is doubled
+   ; CHECK-NEXT:   <INTEGER {{.*}} op0=246/>
+   ret b32 123
+@@ -80,7 +79,7 @@ define b32 @constant32() {
+ define b128 @constant128() {
+   ; CHECK: <FUNCTION_BLOCK
+   ; CHECK:      <CONSTANTS_BLOCK
+-  ; CHECK-NEXT:   <SETTYPE {{.*}} op0=12/>
++  ; CHECK-NEXT:   <SETTYPE {{.*}} op0=10/>
+   ;; The value here is signed variable-length encoded, so the value is doubled
+   ; CHECK-NEXT:   <WIDE_INTEGER op0=24682468/>
+   ret b128 12341234
