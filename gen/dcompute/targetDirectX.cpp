@@ -22,12 +22,13 @@
 
 #if LDC_LLVM_SUPPORTED_TARGET_DirectX
 
+#include "dmd/declaration.h"
 #include "dmd/expression.h"
+#include "dmd/globals.h"
 #include "dmd/mangle.h"
 #include "gen/abi/targets.h"
 #include "gen/dcompute/druntime.h"
 #include "gen/dcompute/target.h"
-#include "dmd/declaration.h"
 #include "gen/logger.h"
 #include "gen/optimizer.h"
 #include "gen/to_string.h"
@@ -107,6 +108,18 @@ public:
   }
 
   void addMetadata() override {
+    // Host CodeGenerator emits !llvm.ident on the host Module only. The
+    // dcompute device Module is separate and must carry it too — DXC/Clang
+    // always do, and some D3D12 drivers reject otherwise-valid DXIL without it.
+    {
+      auto *ident = _ir->module.getOrInsertNamedMetadata("llvm.ident");
+      std::string version("ldc version ");
+      version.append(global.ldc_version.ptr, global.ldc_version.length);
+      llvm::Metadata *node[] = {llvm::MDString::get(ctx, version)};
+      ident->clearOperands();
+      ident->addOperand(llvm::MDNode::get(ctx, node));
+    }
+
     // LLVM's DXContainerGlobals always writes PSV0 at RuntimeInfoSize=52 (v3).
     // Microsoft dxv derives the *expected* size from !dx.valver via
     // GetPSVVersion(ValMajor, ValMinor). Missing valver ⇒ default 1.0 ⇒

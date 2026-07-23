@@ -9,6 +9,7 @@
 import ldc.dcompute;
 
 // LL: target triple = "dxil-pc-shadermodel6.6-compute"
+// LL: !llvm.ident = !{!{{[0-9]+}}}
 // LL: !dx.valver = !{!{{[0-9]+}}}
 
 // After AlwaysInliner+mem2reg: wrapper owns getpointer+store (LLVM test shape).

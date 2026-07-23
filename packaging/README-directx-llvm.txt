@@ -1,21 +1,28 @@
 LLVM with DirectX enabled is required to build LDC for `-mdcompute-targets=directx-*`
 and to run `tests/dcompute/directx_harness`.
 
-Apply `llvm-directx-dxc-parity.patch` on llvm-project (main or the revision you
-build LDC against). It updates `llvm/lib/Target/DirectX` and adds/updates lit
-tests under `llvm/test/CodeGen/DirectX`.
+Apply `llvm-directx-dxc-parity.patch` on llvm-project (revision you build LDC
+against). Current patch focus:
 
-Suggested upstream commit title:
+  - DXIL bitcode writer alignment with DXC (datalayout, KIND table, metadata
+    block layout/order, opaque pointer handling). Under HLSL review; bisect
+    what remains load-bearing after frontend !llvm.ident.
+  - !llvm.ident is NOT invented in the DirectX backend. LDC emits it on the
+    dcompute device Module in gen/dcompute/targetDirectX.cpp (same idea as
+    host CodeGenerator). Clang/DXC already emit it.
 
-  [DirectX] Emit llvm.ident and align DXIL bitcode with DXC
+Suggested commit titles (split when upstreaming):
+
+  [DirectX] Align DXIL bitcode writer with DXC
+  (LDC separately: emit !llvm.ident on DirectX dcompute modules)
 
 Build:
 
   cmake -G Ninja -DLLVM_ENABLE_PROJECTS=clang -DLLVM_TARGETS_TO_BUILD=DirectX ...
   ninja
-  ninja install   # e.g. CMAKE_INSTALL_PREFIX=C:/llvm-dx
+  ninja install
 
-Point LDC at that LLVM (`LLVM_CONFIG`, `LLVM_ROOT`), rebuild `ldc2`, then:
+Point LDC at that LLVM, rebuild ldc2, then:
 
   tests\dcompute\directx_harness\run.ps1 -Hardware
 

@@ -1,38 +1,13 @@
 ﻿diff --git a/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp b/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp
-index 49a20e2f7..1b1131009 100644
+index 49a20e2f7..259b2ed80 100644
 --- a/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp
 +++ b/llvm/lib/Target/DirectX/DXILTranslateMetadata.cpp
-@@ -30,6 +30,7 @@
- #include "llvm/Support/ErrorHandling.h"
- #include "llvm/Support/VersionTuple.h"
- #include "llvm/TargetParser/Triple.h"
-+#include "llvm/Config/llvm-config.h"
- #include <cstdint>
- 
- using namespace llvm;
-@@ -305,6 +306,17 @@ static void emitValidatorVersionMD(Module &M, const ModuleMetadataInfo &MMDI) {
-   ValVerNode->addOperand(MDNode::get(Ctx, MDVals));
- }
- 
-+// DXC always emits !llvm.ident; match for D3D12 driver compatibility.
-+static void emitLLVMIdentMD(Module &M) {
-+  if (M.getNamedMetadata("llvm.ident"))
-+    return;
-+  LLVMContext &Ctx = M.getContext();
-+  std::string Ident = (Twine("llvm (") + LLVM_VERSION_STRING + ")").str();
-+  Metadata *Str = MDString::get(Ctx, Ident);
-+  M.getOrInsertNamedMetadata("llvm.ident")
-+      ->addOperand(MDNode::get(Ctx, Str));
-+}
-+
- static void emitShaderModelVersionMD(Module &M,
-                                      const ModuleMetadataInfo &MMDI) {
-   LLVMContext &Ctx = M.getContext();
-@@ -535,6 +547,7 @@ static void translateGlobalMetadata(Module &M, DXILResourceMap &DRM,
+@@ -535,6 +535,8 @@ static void translateGlobalMetadata(Module &M, DXILResourceMap &DRM,
    emitValidatorVersionMD(M, MMDI);
    emitShaderModelVersionMD(M, MMDI);
    emitDXILVersionTupleMD(M, MMDI);
-+  emitLLVMIdentMD(M);
++  // !llvm.ident is a frontend responsibility (Clang/DXC/LDC). Preserve it via
++  // CompatibleNamedModuleMDs; do not invent one here.
    NamedMDNode *NamedResourceMD = emitResourceMetadata(M, DRM, DRTM);
    auto *ResourceMD =
        (NamedResourceMD != nullptr) ? NamedResourceMD->getOperand(0) : nullptr;
@@ -372,3 +347,29 @@ index c53670a75..8f92baed7 100644
    ;; The value here is signed variable-length encoded, so the value is doubled
    ; CHECK-NEXT:   <WIDE_INTEGER op0=24682468/>
    ret b128 12341234
+diff --git a/llvm/test/CodeGen/DirectX/Metadata/llvm-ident.ll b/llvm/test/CodeGen/DirectX/Metadata/llvm-ident.ll
+new file mode 100644
+index 000000000..33d637800
+--- /dev/null
++++ b/llvm/test/CodeGen/DirectX/Metadata/llvm-ident.ll
+@@ -0,0 +1,20 @@
++; RUN: opt -S -dxil-translate-metadata %s | FileCheck %s
++
++; Frontends (Clang/DXC/LDC) must emit !llvm.ident. This pass preserves it.
++
++target triple = "dxil-pc-shadermodel6.6-compute"
++
++!llvm.ident = !{!0}
++!0 = !{!"frontend test"}
++
++; CHECK-DAG: !llvm.ident = !{![[#IDENT:]]}
++; CHECK-DAG: ![[#IDENT]] = !{!"frontend test"}
++
++; CHECK-DAG: !dx.shaderModel = !{![[#SM:]]}
++; CHECK-DAG: ![[#SM]] = !{!"cs", i32 6, i32 6}
++
++define void @CSMain() #0 {
++  ret void
++}
++
++attributes #0 = { "hlsl.numthreads"="1,1,1" "hlsl.shader"="compute" }

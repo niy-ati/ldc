@@ -8,6 +8,7 @@
 import ldc.dcompute;
 
 // LL: target triple = "dxil-pc-shadermodel6.6-compute"
+// LL: !llvm.ident = !{!{{[0-9]+}}}
 
 // LL: define void @{{.*}}_kernel()
 // LL: attributes #{{[0-9]+}} = { {{.*}}"exp-shader"="cs"{{.*}}"hlsl.numthreads"="8,1,1"{{.*}}"hlsl.shader"="compute"{{.*}} }

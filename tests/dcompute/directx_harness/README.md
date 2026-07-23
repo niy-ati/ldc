@@ -7,6 +7,7 @@ Minimal C++ D3D12 host for **LDC-generated** DXIL.
 `*_kernel` writes through **UAV RawBuffer u0** (`handlefrombinding` + `getpointer`).
 Cores are AlwaysInline + mem2reg so stores lower to `rawBufferStore`.
 Module emits `!dx.valver = {1,8}` so Microsoft `dxv` accepts PSV v3.
+Device module also emits `!llvm.ident` (same idea as host LDC / DXC).
 
 ## Required host pipeline
 
@@ -14,19 +15,18 @@ Module emits `!dx.valver = {1,8}` so Microsoft `dxv` accepts PSV v3.
 2. `dxv kernel.dxil` must succeed
 3. **Sign:** `dxv -o=signed.dxil kernel.dxil` (LLVM leaves container header hash zero)
 4. Hand-built **UAV(u0)** root-sig (LLVM `RTS0` is rejected by `CreateRootSignature`)
-5. Run with `--warp` or hardware (after LLVM DXIL writer fix below)
+5. Run with `--warp` or hardware (needs LLVM DXIL bitcode writer patches below for NVIDIA)
 
-## NVIDIA CreateCPS fix (LLVM)
+## NVIDIA CreateCPS / LLVM
 
-Hardware `CreateComputePipelineState` AVs on dxv-clean LLVM DXIL that omits
-`!llvm.ident` (WARP accepts it). DXC always emits that named MD.
+Hardware `CreateComputePipelineState` can AV on dxv-clean LLVM DXIL when
+`!llvm.ident` is missing (WARP may still accept). Emit ident from the
+**frontend** (LDC `targetDirectX`); do not invent it in the DirectX backend.
 
-Also needed in the DXIL bitcode writer: DXC-matching datalayout / KIND table,
-`METADATA_BLOCK` codeLen 3, MD-before-KINDs order, and opaque-pointer → typed
-`i8*` redirection so the type table does not forward-ref non-struct types.
-
-Rebuild LDC against an LLVM that includes those `Target/DirectX` changes, then
-hardware CreateCPS should succeed the same as WARP.
+Separately, the DXIL bitcode writer may still need DXC-shaped layout
+(datalayout, KIND table, metadata block order, opaque-pointer handling).
+Those changes live in `packaging/llvm-directx-dxc-parity.patch` and are under
+review with LLVM HLSL — bisect what is still required after frontend ident.
 
 ## Build / run
 
