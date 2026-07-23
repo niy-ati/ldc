@@ -21,12 +21,11 @@ Device module also emits `!llvm.ident` (same idea as host LDC / DXC).
 
 Hardware `CreateComputePipelineState` can AV on dxv-clean LLVM DXIL when
 `!llvm.ident` is missing (WARP may still accept). Emit ident from the
-**frontend** (LDC `targetDirectX`); do not invent it in the DirectX backend.
+**frontend** (LDC `targetDirectX`). Bisect (2026-07-23): with frontend ident,
+**stock** LLVM DXIL bitcode writer is enough for empty + minimal UAV CreateCPS
+on RTX 3050; DXC bitcode-writer parity deltas are not required for that gate.
 
-Separately, the DXIL bitcode writer may still need DXC-shaped layout
-(datalayout, KIND table, metadata block order, opaque-pointer handling).
-Those changes live in `packaging/llvm-directx-dxc-parity.patch` and are under
-review with LLVM HLSL — bisect what is still required after frontend ident.
+See `packaging/README-directx-llvm.txt`.
 
 ## Build / run
 

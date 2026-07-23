@@ -1,29 +1,19 @@
-LLVM with DirectX enabled is required to build LDC for `-mdcompute-targets=directx-*`
-and to run `tests/dcompute/directx_harness`.
+LLVM DirectX notes for LDC `-mdcompute-targets=directx-*`.
 
-Apply `llvm-directx-dxc-parity.patch` on llvm-project (revision you build LDC
-against). Current patch focus:
+`llvm-directx-dxc-parity.patch` (against llvm-project near main):
 
-  - DXIL bitcode writer alignment with DXC (datalayout, KIND table, metadata
-    block layout/order, opaque pointer handling). Under HLSL review; bisect
-    what remains load-bearing after frontend !llvm.ident.
-  - !llvm.ident is NOT invented in the DirectX backend. LDC emits it on the
-    dcompute device Module in gen/dcompute/targetDirectX.cpp (same idea as
-    host CodeGenerator). Clang/DXC already emit it.
+  - dxil-translate-metadata does NOT invent !llvm.ident.
+  - Lit checks that frontend-provided !llvm.ident is preserved.
+  - No DXIL bitcode-writer DXC-parity changes (bisect showed they are not
+    required for NVIDIA CreateCPS once !llvm.ident is present).
 
-Suggested commit titles (split when upstreaming):
+LDC emits !llvm.ident on the dcompute device Module in
+gen/dcompute/targetDirectX.cpp (host CodeGenerator already did for host IR).
 
-  [DirectX] Align DXIL bitcode writer with DXC
-  (LDC separately: emit !llvm.ident on DirectX dcompute modules)
+Bisect evidence (RTX 3050): see dcompute-spike/pkgdiff/bisect/RESULTS.md
+  - stock writer + ident → CreateCPS OK
+  - stock writer + no ident → HW AV; WARP OK
 
-Build:
-
-  cmake -G Ninja -DLLVM_ENABLE_PROJECTS=clang -DLLVM_TARGETS_TO_BUILD=DirectX ...
-  ninja
-  ninja install
-
-Point LDC at that LLVM, rebuild ldc2, then:
+Build LLVM with DirectX enabled, point LDC at it, rebuild ldc2, then:
 
   tests\dcompute\directx_harness\run.ps1 -Hardware
-
-Expected: dxv OK, CreateComputePipelineState OK, output[0]==42 on WARP and NVIDIA.
