@@ -1,0 +1,181 @@
+{
+  "generatedAt": "2026-06-21T10:05:31.871Z",
+  "overallVerificationStatus": "CODE_EXISTS",
+  "bridgeImplementationAllowed": false,
+  "mainnetKeyMissing": true,
+  "mandateosPackageId": "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13",
+  "naviPackageId": "0x1e4a13a0494d5facdbe8473e74127b838c2d446ecec0ce262e2eddafa77259cb",
+  "verificationPolicy": "CHAIN_VERIFIED requires RPC-validated success digests for every required evidence item. CODE_EXISTS = SDK/UI wired without execution.",
+  "bridgePolicy": "Bridge implementation blocked until all integrations CHAIN_VERIFIED; bridge must integrate into programmable capital deployment workflows.",
+  "requirements": {
+    "navi": [
+      "depositDigest",
+      "withdrawDigest",
+      "positionEvidence",
+      "portfolioReconciliation"
+    ],
+    "scallop": [
+      "depositDigest",
+      "withdrawDigest",
+      "positionEvidence",
+      "portfolioReconciliation"
+    ],
+    "cetus": [
+      "addLiquidityDigest",
+      "removeLiquidityDigest",
+      "lpPositionEvidence",
+      "portfolioReconciliation"
+    ],
+    "allocation": [
+      "treasuryAllocationDigest",
+      "destinationProtocolDigests",
+      "aggregatedPortfolioProof"
+    ],
+    "smartWalletRules": [
+      "packageUpgradeDigest",
+      "ruleCreationDigest",
+      "ruleExecutionDigest",
+      "resultingWorkflowDigest"
+    ]
+  },
+  "features": {
+    "navi": {
+      "implementationStatus": "CODE_EXISTS",
+      "verificationStatus": "CODE_EXISTS",
+      "blockers": [
+        "Navi: integration wired in SDK/UI — no mainnet execution (set MANDATEOS_MAINNET_KEY)"
+      ],
+      "portfolioReconciliation": {
+        "classification": "CODE_EXISTS",
+        "beforeBalanceMist": null,
+        "afterDepositBalanceMist": null,
+        "afterWithdrawBalanceMist": null,
+        "expectedDepositMist": 10000000,
+        "depositDeltaMatches": null,
+        "withdrawRestoresBaseline": null,
+        "dataSource": "not-executed"
+      }
+    },
+    "scallop": {
+      "implementationStatus": "CODE_EXISTS",
+      "verificationStatus": "CODE_EXISTS",
+      "blockers": [
+        "Scallop: integration wired in SDK/UI — no mainnet execution (set MANDATEOS_MAINNET_KEY)"
+      ],
+      "portfolioReconciliation": {
+        "classification": "CODE_EXISTS",
+        "beforeBalanceMist": null,
+        "afterDepositBalanceMist": null,
+        "afterWithdrawBalanceMist": null,
+        "expectedDepositMist": 10000000,
+        "depositDeltaMatches": null,
+        "withdrawRestoresBaseline": null,
+        "dataSource": "not-executed"
+      }
+    },
+    "cetus": {
+      "implementationStatus": "CODE_EXISTS",
+      "verificationStatus": "CODE_EXISTS",
+      "blockers": [
+        "Cetus: integration wired in SDK/UI — no mainnet execution (set MANDATEOS_MAINNET_KEY)"
+      ],
+      "portfolioReconciliation": {
+        "classification": "CODE_EXISTS",
+        "beforeBalanceMist": null,
+        "afterDepositBalanceMist": null,
+        "afterWithdrawBalanceMist": null,
+        "expectedDepositMist": 10000000,
+        "depositDeltaMatches": null,
+        "withdrawRestoresBaseline": null,
+        "dataSource": "not-executed"
+      }
+    },
+    "allocation": {
+      "implementationStatus": "CODE_EXISTS",
+      "verificationStatus": "CODE_EXISTS",
+      "treasuryAllocationDigest": {
+        "label": "Treasury allocation (single PTB)",
+        "digest": null,
+        "network": "mainnet",
+        "explorer": null,
+        "status": null,
+        "classification": "CODE_EXISTS",
+        "error": "Not executed"
+      },
+      "destinationProtocolDigests": {
+        "navi": {
+          "label": "Navi leg",
+          "digest": null,
+          "network": "mainnet",
+          "explorer": null,
+          "status": null,
+          "classification": "CODE_EXISTS"
+        },
+        "scallop": {
+          "label": "Scallop leg",
+          "digest": null,
+          "network": "mainnet",
+          "explorer": null,
+          "status": null,
+          "classification": "CODE_EXISTS"
+        },
+        "cetus": {
+          "label": "Cetus leg",
+          "digest": null,
+          "network": "mainnet",
+          "explorer": null,
+          "status": null,
+          "classification": "CODE_EXISTS"
+        }
+      },
+      "aggregatedPortfolioProof": {
+        "classification": "CODE_EXISTS",
+        "snapshot": null,
+        "dataSource": "not-executed"
+      },
+      "blockers": [
+        "Set MANDATEOS_MAINNET_KEY and run multi-protocol allocation on mainnet"
+      ]
+    },
+    "smartWalletRules": {
+      "implementationStatus": "CODE_EXISTS",
+      "verificationStatus": "CHAIN_VERIFIED",
+      "packageUpgrade": {
+        "label": "Rules module deployment (publish)",
+        "digest": "EP8bcDkioXZ66cxiE4HA6iVVNg4Xr6z6JPdqvAtHBXrt",
+        "network": "testnet",
+        "explorer": "https://suiscan.xyz/testnet/tx/EP8bcDkioXZ66cxiE4HA6iVVNg4Xr6z6JPdqvAtHBXrt",
+        "status": "success",
+        "classification": "CHAIN_VERIFIED"
+      },
+      "ruleCreate": {
+        "label": "Rule creation",
+        "digest": "7AT2EGgGxvUQ9qDQRCWThjqkYtivrhh2wUJxZ4jkxSXk",
+        "network": "testnet",
+        "explorer": "https://suiscan.xyz/testnet/tx/7AT2EGgGxvUQ9qDQRCWThjqkYtivrhh2wUJxZ4jkxSXk",
+        "status": "success",
+        "classification": "CHAIN_VERIFIED"
+      },
+      "ruleExecute": {
+        "label": "Rule execution (proof-linked)",
+        "digest": "CjLHsD9hGy1SMw7NfJFxkkMWVkNzmLqVc1qZYEu4gke6",
+        "network": "testnet",
+        "explorer": "https://suiscan.xyz/testnet/tx/CjLHsD9hGy1SMw7NfJFxkkMWVkNzmLqVc1qZYEu4gke6",
+        "status": "success",
+        "classification": "CHAIN_VERIFIED"
+      },
+      "resultingWorkflowDigest": {
+        "label": "Workflow execution (Execute Investment)",
+        "digest": "8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+        "network": "testnet",
+        "explorer": "https://suiscan.xyz/testnet/tx/8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+        "status": "success",
+        "classification": "CHAIN_VERIFIED"
+      },
+      "ruleObjectId": "0x3f410b4cadda95b1356d419a6cd764359dc09c7366cba251a8a7e7fe5f096594",
+      "blockers": [
+        "Satellite rules package published — MandateOS monolithic upgrade blocked (InsufficientGas on full package)"
+      ]
+    }
+  }
+}

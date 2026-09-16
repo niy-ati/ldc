@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mandateos/testnet-results.json",
+  "title": "MandateOS Testnet Proof Results",
+  "type": "object",
+  "required": ["network", "packageId", "governor", "steps", "objects"],
+  "properties": {
+    "network": { "type": "string", "enum": ["testnet"] },
+    "packageId": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+    "governor": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+    "liveMandateId": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+    "guardianMandateId": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "digest", "explorer"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "digest": { "type": "string", "minLength": 1 },
+          "explorer": {
+            "type": "string",
+            "pattern": "^https://suiscan\\.xyz/testnet/(tx|object)/"
+          },
+          "objectIds": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "objects": {
+      "type": "object",
+      "required": [
+        "FinancialMandate",
+        "FinancialConstitution",
+        "MandateVault",
+        "ObligationRegistry",
+        "GuardianPolicy",
+        "LiquidityEngine"
+      ],
+      "properties": {
+        "FinancialMandate": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "FinancialConstitution": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "MandateVault": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "ObligationRegistry": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "GuardianPolicy": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "LiquidityEngine": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "TreasuryConfig": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "DelegationCap": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "address": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "executorCapId": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" }
+      }
+    },
+    "guardian": {
+      "type": "object",
+      "properties": {
+        "actionId": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "approvalId": { "type": "string", "pattern": "^0x[a-fA-F0-9]{64}$" },
+        "executeDigest": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": true
+}

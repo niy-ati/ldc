@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+.git
+.cursor
+agent-transcripts
+mandateos
+packages/command-center/dist
+packages/command-center/dist-release
+packages/mandateos-sdk/dist
+scripts
+docs
+*.log
+.env.local

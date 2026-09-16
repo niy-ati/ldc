@@ -1,0 +1,12 @@
+[package]
+name = "MandateOSPtbShim"
+edition = "2024.beta"
+version = "1.0.0"
+published-at = "0x62148461af79d28034bee14c7300fe873d878eab11cc92d3bd869eefc8c7a00b"
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+MandateOS = { local = "../mandateos", published-at = "0x6da8857175dbf49e814789016ffde0a3995edd31501b122c47d86aa8096e5545", override = true }
+
+[addresses]
+mandateos_ptb = "0x0"

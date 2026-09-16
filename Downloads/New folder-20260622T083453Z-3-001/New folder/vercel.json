@@ -1,0 +1,39 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build:sdk && npm run build -w @mandateos/command-center",
+  "outputDirectory": "packages/command-center/dist",
+  "installCommand": "npm install",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/coingecko/:path*",
+      "destination": "https://api.coingecko.com/api/v3/:path*"
+    },
+    {
+      "source": "/api/coingecko-pro/:path*",
+      "destination": "https://pro-api.coingecko.com/api/v3/:path*"
+    },
+    {
+      "source": "/api/deepbook/:path*",
+      "destination": "https://deepbook-indexer.mainnet.mystenlabs.com/:path*"
+    },
+    {
+      "source": "/api/deepbook/:path*",
+      "destination": "https://deepbook-indexer.mainnet.mystenlabs.com/:path*"
+    },
+    {
+      "source": "/api/defillama/:path*",
+      "destination": "https://yields.llama.fi/:path*"
+    },
+    {
+      "source": "/((?!assets/|api/|.*\\.html$|.*\\.[a-z0-9]+$).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [{ "key": "X-Frame-Options", "value": "SAMEORIGIN" }]
+    }
+  ]
+}

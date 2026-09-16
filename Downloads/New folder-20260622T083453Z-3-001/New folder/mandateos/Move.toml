@@ -1,0 +1,14 @@
+[package]
+name = "MandateOS"
+edition = "2024.beta"
+version = "1.0.0"
+published-at = "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13"
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+
+[addresses]
+mandateos = "0x0"
+
+[environments]
+testnet = "4c78adac"

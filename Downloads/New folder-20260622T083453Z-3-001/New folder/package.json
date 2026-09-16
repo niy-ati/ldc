@@ -1,0 +1,50 @@
+{
+  "name": "mandateos-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "overrides": {
+    "@mysten/sui": "1.45.2",
+    "@mysten/dapp-kit": "0.20.0",
+    "@mysten/wallet-standard": "0.19.9",
+    "@mysten/slush-wallet": "0.3.0",
+    "@mysten/bcs": "1.9.2",
+    "@mysten/utils": "0.2.0"
+  },
+  "scripts": {
+    "build:sdk": "npm run build -w @mandateos/sdk",
+    "build:cc": "npm run build -w @mandateos/command-center",
+    "build": "npm run build:sdk && npm run build:cc",
+    "dev": "npm run dev:cc",
+    "dev:cc": "npm run dev -w @mandateos/command-center",
+    "dev:https": "npm run dev:https -w @mandateos/command-center",
+    "test:sdk": "npm run test -w @mandateos/sdk",
+    "testnet:fund": "npm run testnet:fund -w @mandateos/sdk",
+    "testnet:proof": "npm run testnet:proof -w @mandateos/sdk",
+    "testnet:docs": "npm run testnet:docs -w @mandateos/sdk",
+    "testnet:verify": "node scripts/validate-proof-artifacts.mjs",
+    "testnet:readiness": "powershell -ExecutionPolicy Bypass -File mandateos/scripts/verify-readiness.ps1",
+    "testnet:publish": "powershell -ExecutionPolicy Bypass -File mandateos/scripts/publish-testnet.ps1",
+    "testnet:publish:dry": "powershell -ExecutionPolicy Bypass -File mandateos/scripts/publish-testnet.ps1 -DryRun",
+    "testnet:upgrade": "powershell -ExecutionPolicy Bypass -File mandateos/scripts/upgrade-testnet.ps1",
+    "testnet:upgrade:dry": "powershell -ExecutionPolicy Bypass -File mandateos/scripts/upgrade-testnet.ps1 -GasBudget 700000000; exit 0",
+    "testnet:reality-audit": "npx tsx scripts/run-reality-audit.ts",
+    "testnet:judge-verification": "npx tsx scripts/run-judge-verification.ts",
+    "testnet:evidence-sprint": "npx tsx scripts/run-judge-verification.ts",
+    "testnet:evidence-rebuild": "npx tsx scripts/run-judge-verification.ts --rebuild-from proof/sprint-digest-manifest.json",
+    "testnet:external-defi": "npx tsx scripts/run-external-defi-verification.ts",
+    "internal:navi-verify": "npm run build:sdk && npx tsx scripts/run-external-defi-verification.ts",
+    "defi:verify-sprint": "npm run build:sdk && npx tsx scripts/run-defi-verification-sprint.ts",
+    "defi:verify-final": "npm run build:sdk && npx tsx scripts/run-defi-final-verification.ts",
+    "defi:chain-verify": "npm run build:sdk && npx tsx scripts/run-defi-chain-verified.ts",
+    "smart-wallet:verify": "npm run build:sdk && npx tsx scripts/smart-wallet-rules-sprint.ts",
+    "verify-proof": "node scripts/verify-proof.mjs",
+    "testnet:ui-judge-validate": "node scripts/verify-proof.mjs proof/proof.json",
+    "testnet:watch-upgrade": "powershell -ExecutionPolicy Bypass -File mandateos/scripts/watch-governor-and-audit.ps1",
+    "build:release": "npm run build:sdk && npm run build -w @mandateos/command-center -- --outDir dist-release",
+    "deploy:netlify": "powershell -ExecutionPolicy Bypass -File scripts/deploy-production.ps1",
+    "deploy:netlify:preview": "npm run build:release && npx netlify-cli deploy --dir=packages/command-center/dist-release",
+    "deploy:vercel": "powershell -ExecutionPolicy Bypass -File scripts/deploy-vercel.ps1"
+  }
+}

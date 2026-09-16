@@ -1,0 +1,43 @@
+{
+  "name": "@mandateos/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript PTB SDK for MandateOS — business-level financial operations on Sui",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
+    "testnet:proof": "tsx scripts/testnet-proof.ts",
+    "testnet:fund": "node scripts/fund-testnet.mjs",
+    "testnet:docs": "node scripts/generate-phase7-docs.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@cetusprotocol/cetus-sui-clmm-sdk": "^5.4.0",
+    "@mysten/sui": "1.45.2",
+    "@naviprotocol/lending": "1.4.6",
+    "@scallop-io/sui-scallop-sdk": "^2.4.5",
+    "@types/bn.js": "^5.2.0",
+    "bn.js": "^5.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

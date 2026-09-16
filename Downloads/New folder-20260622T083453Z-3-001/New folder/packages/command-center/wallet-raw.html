@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raw Wallet Standard — No React / No dapp-kit</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        background: #000;
+        color: #eee;
+        min-height: 100vh;
+      }
+      header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #333;
+      }
+      h1 { margin: 0 0 0.5rem; font-size: 1rem; font-family: system-ui, sans-serif; }
+      p { margin: 0; color: #888; font-size: 0.82rem; font-family: system-ui, sans-serif; }
+      .links { margin-top: 0.5rem; font-family: system-ui, sans-serif; font-size: 0.82rem; }
+      .links a { color: #c9a962; margin-right: 1rem; }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid #222;
+      }
+      button {
+        padding: 0.45rem 0.75rem;
+        background: #1a1a1a;
+        border: 1px solid #444;
+        border-radius: 6px;
+        color: #c9a962;
+        cursor: pointer;
+        font-size: 0.78rem;
+      }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      #meta {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.78rem;
+        color: #aaa;
+        border-bottom: 1px solid #222;
+        white-space: pre-wrap;
+      }
+      #log {
+        padding: 1rem 1.25rem;
+        font-size: 0.75rem;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .err { color: #ff3b30; }
+      .ok { color: #00c853; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Raw Wallet Standard probe</h1>
+      <p>Zero React. Zero dapp-kit. Only <code>getWallets()</code> + <code>standard:connect</code>.</p>
+      <div class="links">
+        <a href="http://localhost:5173/wallet-raw.html">localhost</a>
+        <a href="http://127.0.0.1:5173/wallet-raw.html">127.0.0.1</a>
+        <a href="/wallet-test.html">wallet-test (dapp-kit)</a>
+      </div>
+    </header>
+    <div class="toolbar">
+      <button type="button" id="btn-compare">Compare all wallets</button>
+      <button type="button" id="btn-silent">silent:connect (all)</button>
+      <button type="button" id="btn-connect-slush">standard:connect Slush</button>
+      <button type="button" id="btn-suite">Run full suite + copy JSON</button>
+      <button type="button" id="btn-clear">Clear log</button>
+    </div>
+    <div id="meta"></div>
+    <pre id="log"></pre>
+    <script type="module" src="/src/wallet-raw.ts"></script>
+  </body>
+</html>

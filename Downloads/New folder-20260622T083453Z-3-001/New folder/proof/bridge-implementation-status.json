@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-06-19T00:00:00.000Z",
+  "feature": "cross-chain-bridge",
+  "verificationPolicy": "Bridge is never CHAIN_VERIFIED until formal cross-chain verification sprint after Navi, Scallop, Cetus, Allocation, Browser Verification, and Cross Protocol Routing are CHAIN_VERIFIED.",
+  "overallImplementationStatus": "BLOCKED",
+  "overallVerificationStatus": "NOT VERIFIED",
+  "layers": {
+    "sdk": "IMPLEMENTED",
+    "workflow": "IMPLEMENTED",
+    "proof": "IMPLEMENTED",
+    "portfolio": "IMPLEMENTED",
+    "risk": "IMPLEMENTED",
+    "tracking": "NOT VERIFIED"
+  },
+  "programmableChain": {
+    "id": "treasury-allocate-bridge-defi",
+    "implementationStatus": "IMPLEMENTED",
+    "verificationStatus": "NOT VERIFIED",
+    "steps": [
+      "invest-execute",
+      "allocate-bundle",
+      "bridge-initiate",
+      "navi-deposit"
+    ]
+  },
+  "routes": [
+    {
+      "id": "sui-testnet-to-mainnet-sui",
+      "provider": "wormhole",
+      "implementationStatus": "BLOCKED",
+      "verificationStatus": "NOT VERIFIED",
+      "blocker": "Wormhole Token Bridge PTB builder not wired — provider package IDs required"
+    },
+    {
+      "id": "sui-mainnet-to-testnet-sui",
+      "provider": "wormhole",
+      "implementationStatus": "BLOCKED",
+      "verificationStatus": "NOT VERIFIED",
+      "blocker": "Return path blocked until outbound route verified"
+    },
+    {
+      "id": "ethereum-to-sui-mainnet-usdc",
+      "provider": "wormhole",
+      "implementationStatus": "BLOCKED",
+      "verificationStatus": "NOT VERIFIED",
+      "blocker": "Multi-chain EVM source not integrated in workflow layer"
+    }
+  ],
+  "integrationPoints": {
+    "capitalAllocationPage": "IMPLEMENTED",
+    "programmableChainsPanel": "IMPLEMENTED",
+    "proofCenterExport": "IMPLEMENTED",
+    "portfolioReconciliation": "IMPLEMENTED",
+    "standaloneBridgeRoute": false
+  },
+  "upstreamVerificationGate": {
+    "navi": "NOT VERIFIED",
+    "scallop": "NOT VERIFIED",
+    "cetus": "NOT VERIFIED",
+    "allocation": "NOT VERIFIED",
+    "browserVerification": "NOT VERIFIED",
+    "crossProtocolRouting": "NOT VERIFIED"
+  },
+  "claims": {
+    "bridgeReady": false,
+    "bridgeVerified": false,
+    "bridgeChainVerified": false
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "packageId": "0x96e72b6e6e5085d98e46b30c7da1c2b0300bcfda51719c6bedff4bff886c3713",
+  "localModuleCount": 26,
+  "onChainModuleCount": 26,
+  "missingModulesOnChain": [],
+  "sdkTargetVerification": [
+    {
+      "module": "treasury_mandate",
+      "function": "create",
+      "status": "present"
+    },
+    {
+      "module": "treasury_mandate",
+      "function": "share_all",
+      "status": "present"
+    },
+    {
+      "module": "treasury_mandate",
+      "function": "fund",
+      "status": "present"
+    },
+    {
+      "module": "treasury_mandate",
+      "function": "treasury_disbursement",
+      "status": "present"
+    },
+    {
+      "module": "simulation",
+      "function": "open_simulation",
+      "status": "present"
+    },
+    {
+      "module": "simulation",
+      "function": "run_projection",
+      "status": "present"
+    },
+    {
+      "module": "simulation",
+      "function": "approve_simulation",
+      "status": "present"
+    },
+    {
+      "module": "simulation",
+      "function": "transfer_approval",
+      "status": "present"
+    },
+    {
+      "module": "guardian",
+      "function": "evaluate",
+      "status": "present"
+    },
+    {
+      "module": "guardian",
+      "function": "share_action",
+      "status": "present"
+    },
+    {
+      "module": "guardian",
+      "function": "execute_action",
+      "status": "present"
+    },
+    {
+      "module": "delegation",
+      "function": "issue_executor_cap",
+      "status": "present"
+    },
+    {
+      "module": "delegation",
+      "function": "transfer_executor_cap",
+      "status": "present"
+    },
+    {
+      "module": "workflow",
+      "function": "open_session",
+      "status": "present"
+    },
+    {
+      "module": "financial_mandate",
+      "function": "settle",
+      "status": "present"
+    },
+    {
+      "module": "payroll_mandate",
+      "function": "create",
+      "status": "present"
+    },
+    {
+      "module": "subscription_mandate",
+      "function": "create",
+      "status": "present"
+    },
+    {
+      "module": "revenue_allocation_mandate",
+      "function": "create",
+      "status": "present"
+    },
+    {
+      "module": "auto_investment_mandate",
+      "function": "create",
+      "status": "present"
+    },
+    {
+      "module": "dao_treasury_mandate",
+      "function": "create",
+      "status": "present"
+    }
+  ],
+  "allSdkTargetsPresent": true,
+  "note": "MandateOS uses public fun (PTB-callable); no entry fun attributes in Move sources."
+}

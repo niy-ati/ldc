@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mandateos/deployment.json",
+  "title": "MandateOS Testnet Deployment",
+  "type": "object",
+  "required": ["packageId", "digest", "governor", "network"],
+  "properties": {
+    "packageId": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{64}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/=_-]{32,}$"
+    },
+    "governor": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{64}$"
+    },
+    "network": {
+      "type": "string",
+      "enum": ["testnet"]
+    },
+    "publishedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "cliVersion": {
+      "type": "string"
+    },
+    "protocolVersion": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false
+}

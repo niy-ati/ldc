@@ -1,0 +1,31 @@
+{
+  "ptbShimUpgradeCapId": "0x0859b8c220a7610d57a7cfad886fe45a1cc62e7ce7f6d5776b9340c400d16b78",
+  "upgradeCapPackage": "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13",
+  "upgradedAt": "2026-06-21T08:23:50.727Z",
+  "fixes": [
+    "workflow::destroy_session public + SDK closeWorkflowSession PTB tail",
+    "financial_mandate::simulate_and_approve on active package (correct SimulationApproval type)"
+  ],
+  "upgradeDigest": "6vzEqvHNQWLA6BSTfreiT1YdET5XwSf7XnGkwdN6kGsb",
+  "packageId": "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13",
+  "publishedAt": "2026-06-19T00:00:00.000Z",
+  "packageVersion": "5",
+  "upgradeCapId": "0x8133621db94776a6f146163d249695f5e6b30fdf7bcd972afd21fce3846d284f",
+  "legacyPackageId": "0x96e72b6e6e5085d98e46b30c7da1c2b0300bcfda51719c6bedff4bff886c3713",
+  "digest": "6vzEqvHNQWLA6BSTfreiT1YdET5XwSf7XnGkwdN6kGsb",
+  "governor": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+  "adminCapId": "0x1eaf17fe6dc3b283eda837f86d9ea8a5ea124fea77228c8db3773ff59d8ba3af",
+  "entrypointVerification": "proof/entrypoint-verification.json",
+  "upgradeCapOwner": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+  "explorer": {
+    "upgradeTx": "https://suiscan.xyz/testnet/tx/6vzEqvHNQWLA6BSTfreiT1YdET5XwSf7XnGkwdN6kGsb",
+    "package": "https://suiscan.xyz/testnet/object/0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13"
+  },
+  "upgradeCapVersion": "5",
+  "ptbShimPackageId": "0x70cba71ba84b852a83c66f3cddad429c98d082cffdc7638fa21e98faecf26af9",
+  "network": "testnet",
+  "priorPackageIds": [
+    "0x7d6ce0ae17d3b23cd36a2e7828afe3c90294e92f66565ac644871acb9080217b",
+    "0x6da8857175dbf49e814789016ffde0a3995edd31501b122c47d86aa8096e5545"
+  ]
+}

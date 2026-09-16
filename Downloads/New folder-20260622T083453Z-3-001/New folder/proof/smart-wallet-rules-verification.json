@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-06-21T10:04:20.863Z",
+  "feature": "smartWalletRules",
+  "verificationStatus": "CHAIN_VERIFIED",
+  "narrative": "Money → Rule → Financial Action",
+  "mandateosPackageId": "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13",
+  "rulesPackageId": "0x9c97a6e3ba609f114b8069334cf88f467217893f2a9c44301a8227f66b57b5ed",
+  "deploymentNote": "Satellite rules package published — MandateOS monolithic upgrade blocked (InsufficientGas on full package)",
+  "upgradeCapId": "0x8133621db94776a6f146163d249695f5e6b30fdf7bcd972afd21fce3846d284f",
+  "upgradeCapPolicyFix": "already_additive_or_skipped",
+  "evidence": {
+    "packageUpgradeDigest": {
+      "label": "Rules module deployment (publish)",
+      "digest": "EP8bcDkioXZ66cxiE4HA6iVVNg4Xr6z6JPdqvAtHBXrt",
+      "network": "testnet",
+      "explorer": "https://suiscan.xyz/testnet/tx/EP8bcDkioXZ66cxiE4HA6iVVNg4Xr6z6JPdqvAtHBXrt",
+      "status": "success",
+      "classification": "CHAIN_VERIFIED"
+    },
+    "ruleCreationDigest": {
+      "label": "Rule creation",
+      "digest": "7AT2EGgGxvUQ9qDQRCWThjqkYtivrhh2wUJxZ4jkxSXk",
+      "network": "testnet",
+      "explorer": "https://suiscan.xyz/testnet/tx/7AT2EGgGxvUQ9qDQRCWThjqkYtivrhh2wUJxZ4jkxSXk",
+      "status": "success",
+      "classification": "CHAIN_VERIFIED"
+    },
+    "ruleExecutionDigest": {
+      "label": "Rule execution (proof-linked)",
+      "digest": "CjLHsD9hGy1SMw7NfJFxkkMWVkNzmLqVc1qZYEu4gke6",
+      "network": "testnet",
+      "explorer": "https://suiscan.xyz/testnet/tx/CjLHsD9hGy1SMw7NfJFxkkMWVkNzmLqVc1qZYEu4gke6",
+      "status": "success",
+      "classification": "CHAIN_VERIFIED"
+    },
+    "workflowExecutionDigest": {
+      "label": "Workflow execution (Execute Investment)",
+      "digest": "8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+      "network": "testnet",
+      "explorer": "https://suiscan.xyz/testnet/tx/8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+      "status": "success",
+      "classification": "CHAIN_VERIFIED"
+    }
+  },
+  "ruleObjectId": "0x3f410b4cadda95b1356d419a6cd764359dc09c7366cba251a8a7e7fe5f096594",
+  "blockers": []
+}

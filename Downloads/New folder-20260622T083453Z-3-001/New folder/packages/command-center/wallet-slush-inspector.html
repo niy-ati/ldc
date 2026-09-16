@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slush Account Inspector — Wallet Standard exposure</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: system-ui, sans-serif; background: #080808; color: #eee; min-height: 100vh; }
+      header { padding: 1rem 1.25rem; border-bottom: 1px solid #333; }
+      h1 { margin: 0 0 0.35rem; font-size: 1.05rem; }
+      .sub { margin: 0; color: #888; font-size: 0.85rem; max-width: 56rem; line-height: 1.45; }
+      .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid #222; }
+      button {
+        padding: 0.5rem 0.85rem; background: #1a1a1a; border: 1px solid #444;
+        border-radius: 6px; color: #c9a962; cursor: pointer; font-size: 0.8rem;
+      }
+      button:disabled { opacity: 0.5; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid #222; }
+      @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+      section { padding: 1rem 1.25rem; border-right: 1px solid #222; }
+      section:last-child { border-right: none; }
+      h2 { margin: 0 0 0.75rem; font-size: 0.9rem; color: #c9a962; }
+      #verdict { padding: 1rem 1.25rem; background: #111; border-bottom: 1px solid #222; font-size: 0.85rem; line-height: 1.5; }
+      #accounts-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; font-family: ui-monospace, Menlo, Consolas, monospace; }
+      #accounts-table th, #accounts-table td { border: 1px solid #333; padding: 0.35rem 0.5rem; text-align: left; vertical-align: top; word-break: break-all; }
+      #accounts-table th { color: #888; background: #0f0f0f; }
+      .empty { color: #666; font-style: italic; }
+      #log {
+        padding: 1rem 1.25rem; font-family: ui-monospace, Menlo, Consolas, monospace;
+        font-size: 0.72rem; line-height: 1.45; white-space: pre-wrap; word-break: break-all; min-height: 14rem;
+      }
+      .ok { color: #00c853; } .warn { color: #ffb300; } .err { color: #ff3b30; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Slush account inspector</h1>
+      <p class="sub">
+        Logs connect({ silent: false }) return payload, wallet.accounts immediately after,
+        standard:events updates, and per-account <strong>label · address · chains</strong>.
+        Answers: does Slush expose any Wallet Standard account object before authorization?
+      </p>
+    </header>
+    <div class="toolbar">
+      <button type="button" id="btn-pre">1. Pre-auth surface</button>
+      <button type="button" id="btn-events">Subscribe standard:events</button>
+      <button type="button" id="btn-connect">2. connect({ silent: false })</button>
+      <button type="button" id="btn-report">Export JSON + clipboard</button>
+      <button type="button" id="btn-clear">Clear log</button>
+    </div>
+    <div id="verdict">Run step 1 to inspect pre-authorization wallet.accounts surface.</div>
+    <div class="grid">
+      <section>
+        <h2>Account objects (latest snapshot)</h2>
+        <table id="accounts-table">
+          <thead>
+            <tr><th>source</th><th>label</th><th>address</th><th>chains</th></tr>
+          </thead>
+          <tbody id="accounts-body">
+            <tr><td colspan="4" class="empty">No snapshot yet</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <h2>standard:events log</h2>
+        <div id="events-log" class="empty" style="font-size:0.78rem;font-family:monospace;color:#aaa;">No events yet</div>
+      </section>
+    </div>
+    <pre id="log"></pre>
+    <script type="module" src="/src/wallet-slush-inspector.ts"></script>
+  </body>
+</html>

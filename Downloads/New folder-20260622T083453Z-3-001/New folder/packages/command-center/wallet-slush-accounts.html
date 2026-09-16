@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slush Account Exposure — Wallet Standard</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #0a0a0a;
+        color: #eee;
+        min-height: 100vh;
+      }
+      header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #333;
+      }
+      h1 { margin: 0 0 0.35rem; font-size: 1.05rem; }
+      .sub { margin: 0; color: #888; font-size: 0.85rem; max-width: 52rem; }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid #222;
+      }
+      button {
+        padding: 0.5rem 0.85rem;
+        background: #1a1a1a;
+        border: 1px solid #444;
+        border-radius: 6px;
+        color: #c9a962;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      .panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        border-bottom: 1px solid #222;
+      }
+      @media (max-width: 900px) { .panel { grid-template-columns: 1fr; } }
+      section {
+        padding: 1rem 1.25rem;
+        border-right: 1px solid #222;
+      }
+      section:last-child { border-right: none; }
+      h2 { margin: 0 0 0.75rem; font-size: 0.9rem; color: #c9a962; }
+      dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 11rem 1fr;
+        gap: 0.35rem 0.75rem;
+        font-size: 0.82rem;
+      }
+      dt { color: #888; }
+      dd { margin: 0; font-family: ui-monospace, Menlo, Consolas, monospace; word-break: break-all; }
+      .yes { color: #00c853; }
+      .no { color: #ff3b30; }
+      #interpretation {
+        padding: 1rem 1.25rem;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        border-bottom: 1px solid #222;
+        background: #111;
+      }
+      #interpretation ul { margin: 0.5rem 0 0; padding-left: 1.2rem; color: #bbb; }
+      #log {
+        padding: 1rem 1.25rem;
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        font-size: 0.75rem;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-all;
+        min-height: 12rem;
+      }
+      .ok { color: #00c853; }
+      .warn { color: #ffb300; }
+      .err { color: #ff3b30; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Slush account exposure probe</h1>
+      <p class="sub">
+        Wallet Standard only — no React, no dapp-kit. Measures whether Slush exposes
+        <code>wallet.accounts</code> and what <code>standard:connect({ silent: true })</code> returns.
+        Focus: authorization state, not origin.
+      </p>
+    </header>
+    <div class="toolbar">
+      <button type="button" id="btn-refresh">Refresh snapshot</button>
+      <button type="button" id="btn-events">Subscribe standard:events</button>
+      <button type="button" id="btn-silent">silent:connect probe</button>
+      <button type="button" id="btn-interactive">standard:connect (popup)</button>
+      <button type="button" id="btn-report">Full report + copy JSON</button>
+      <button type="button" id="btn-clear">Clear log</button>
+    </div>
+    <div class="panel">
+      <section>
+        <h2>Slush Wallet Standard surface</h2>
+        <dl id="snapshot">
+          <dt>wallet.id</dt><dd id="f-id">—</dd>
+          <dt>wallet.name</dt><dd id="f-name">—</dd>
+          <dt>accounts.length</dt><dd id="f-acct-len">—</dd>
+          <dt>wallet.accounts</dt><dd id="f-acct">—</dd>
+          <dt>wallet.chains</dt><dd id="f-chains">—</dd>
+          <dt>wallet.features</dt><dd id="f-features">—</dd>
+          <dt>standard:connect</dt><dd id="f-connect">—</dd>
+          <dt>standard:events</dt><dd id="f-events">—</dd>
+        </dl>
+      </section>
+      <section>
+        <h2>Onboarding checks (if accounts stay empty)</h2>
+        <ol id="checks" style="margin:0;padding-left:1.2rem;font-size:0.82rem;line-height:1.5;color:#bbb;"></ol>
+      </section>
+    </div>
+    <div id="interpretation"></div>
+    <pre id="log"></pre>
+    <script type="module" src="/src/wallet-slush-accounts.ts"></script>
+  </body>
+</html>

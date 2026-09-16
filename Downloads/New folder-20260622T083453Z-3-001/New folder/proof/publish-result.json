@@ -1,0 +1,96 @@
+﻿sui.exe : [NOTE] Dependencies on Sui, MoveStdlib, Bridge, DeepBook, and SuiSystem are automatically added, but this 
+feature is disabled for your package because you have explicitly included dependencies on Sui. Consider removing these 
+dependencies from `Move.toml`.
+At C:\Users\niyat\New folder\mandateos\scripts\publish-testnet.ps1:23 char:12
++     $out = & $SuiExe @SuiArgs 2>&1
++            ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([NOTE] Dependen...om `Move.toml`.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INCLUDING DEPENDENCY MoveStdlib
+INCLUDING DEPENDENCY Sui
+BUILDING MandateOS
+warning[W09011]: unused constant
+  ΓöîΓöÇ .\sources\deepbook_forecast.move:9:7
+  Γöé
+9 Γöé const POOL_SUI_USDC: u8 = 1;
+  Γöé       ^^^^^^^^^^^^^ The constant 'POOL_SUI_USDC' is never used. Consider removing it.
+  Γöé
+  = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 
+'fun', or 'struct')
+
+warning[W09011]: unused constant
+   ΓöîΓöÇ .\sources\deepbook_forecast.move:10:7
+   Γöé
+10 Γöé const POOL_SUI_USDT: u8 = 2;
+   Γöé       ^^^^^^^^^^^^^ The constant 'POOL_SUI_USDT' is never used. Consider removing it.
+   Γöé
+   = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 
+'fun', or 'struct')
+
+warning[W09011]: unused constant
+  ΓöîΓöÇ .\sources\receipts.move:9:7
+  Γöé
+9 Γöé const RECEIPT_OBLIGATION: u8 = 2;
+  Γöé       ^^^^^^^^^^^^^^^^^^ The constant 'RECEIPT_OBLIGATION' is never used. Consider removing it.
+  Γöé
+  = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 
+'fun', or 'struct')
+
+warning[W09011]: unused constant
+   ΓöîΓöÇ .\sources\receipts.move:10:7
+   Γöé
+10 Γöé const RECEIPT_RISK: u8 = 3;
+   Γöé       ^^^^^^^^^^^^ The constant 'RECEIPT_RISK' is never used. Consider removing it.
+   Γöé
+   = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 
+'fun', or 'struct')
+
+warning[W09011]: unused constant
+   ΓöîΓöÇ .\sources\receipts.move:11:7
+   Γöé
+11 Γöé const RECEIPT_LIQUIDITY: u8 = 4;
+   Γöé       ^^^^^^^^^^^^^^^^^ The constant 'RECEIPT_LIQUIDITY' is never used. Consider removing it.
+   Γöé
+   = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 
+'fun', or 'struct')
+
+warning[W09011]: unused constant
+   ΓöîΓöÇ .\sources\receipts.move:12:7
+   Γöé
+12 Γöé const RECEIPT_WORKFLOW: u8 = 5;
+   Γöé       ^^^^^^^^^^^^^^^^ The constant 'RECEIPT_WORKFLOW' is never used. Consider removing it.
+   Γöé
+   = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 
+'fun', or 'struct')
+
+warning[W09011]: unused constant
+   ΓöîΓöÇ .\sources\receipts.move:13:7
+   Γöé
+13 Γöé const RECEIPT_REMEDIATION: u8 = 6;
+   Γöé       ^^^^^^^^^^^^^^^^^^^ The constant 'RECEIPT_REMEDIATION' is never used. Consider removing it.
+   Γöé
+   = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 
+'fun', or 'struct')
+
+warning[W09002]: unused variable
+    ΓöîΓöÇ .\sources\financial_mandate.move:209:5
+    Γöé
+209 Γöé     forecast: &MarketForecast,
+    Γöé     ^^^^^^^^ Unused parameter 'forecast'. Consider removing or prefixing with an underscore: '_forecast'
+    Γöé
+    = This warning can be suppressed with '#[allow(unused_variable)]' applied to the 'module' or module member 
+('const', 'fun', or 'struct')
+
+warning[W09002]: unused variable
+    ΓöîΓöÇ .\sources\financial_mandate.move:210:5
+    Γöé
+210 Γöé     hook: &DeepBookHook,
+    Γöé     ^^^^ Unused parameter 'hook'. Consider removing or prefixing with an underscore: '_hook'
+    Γöé
+    = This warning can be suppressed with '#[allow(unused_variable)]' applied to the 'module' or module member 
+('const', 'fun', or 'struct')
+
+Failed to publish the Move module(s), reason: Your package is already published. You have to manually remove the publication entry to publish again.
+ - If you are doing a regular publish, you can remove the entry for your environment from `Published.toml`.
+ - If you are doing a test publish, you can either specify a new file with `--pubfile-path`, or remove the entry from your existing ephemeral publication file.

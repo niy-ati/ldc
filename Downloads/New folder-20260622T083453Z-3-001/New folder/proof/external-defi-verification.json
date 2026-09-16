@@ -1,0 +1,6 @@
+{
+  "generatedAt": "2026-06-21T08:58:41.798Z",
+  "classification": "NOT VERIFIED",
+  "error": "Set MANDATEOS_MAINNET_KEY (suiprivkey…) for mainnet Navi verification.",
+  "blocker": "Set MANDATEOS_MAINNET_KEY and run: npm run mainnet:navi-verify"
+}

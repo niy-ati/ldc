@@ -1,0 +1,76 @@
+{
+  "network": "testnet",
+  "packageId": "0x0000000000000000000000000000000000000000000000000000000000000001",
+  "governor": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+  "liveMandateId": "0x0000000000000000000000000000000000000000000000000000000000000002",
+  "guardianMandateId": "0x0000000000000000000000000000000000000000000000000000000000000003",
+  "steps": [
+    {
+      "name": "Create Treasury Mandate",
+      "digest": "DryRunDigestCreateTreasury1234567890ABCDEF",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestCreateTreasury1234567890ABCDEF",
+      "objectIds": {
+        "FinancialMandate": "0x0000000000000000000000000000000000000000000000000000000000000002"
+      }
+    },
+    {
+      "name": "Fund Vault",
+      "digest": "DryRunDigestFundVault1234567890ABCDEFGH",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestFundVault1234567890ABCDEFGH"
+    },
+    {
+      "name": "Simulate + Approve Treasury Disbursement",
+      "digest": "DryRunDigestSimulate1234567890ABCDEFGHIJ",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestSimulate1234567890ABCDEFGHIJ"
+    },
+    {
+      "name": "Execute Treasury Payment",
+      "digest": "DryRunDigestExecute1234567890ABCDEFGHIJK",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestExecute1234567890ABCDEFGHIJK"
+    },
+    {
+      "name": "Issue ExecutorCap",
+      "digest": "DryRunDigestIssueCap1234567890ABCDEFGHIJKL",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestIssueCap1234567890ABCDEFGHIJKL"
+    },
+    {
+      "name": "Delegated Payment (success)",
+      "digest": "DryRunDigestAgentOk1234567890ABCDEFGHIJKLM",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestAgentOk1234567890ABCDEFGHIJKLM"
+    },
+    {
+      "name": "Delegated Payment (rejected — over max_per_tx)",
+      "digest": "failed: MoveAbort",
+      "explorer": "failed: MoveAbort"
+    },
+    {
+      "name": "Guardian Evaluate + Share (AUTO_RESTRICT)",
+      "digest": "DryRunDigestGuardianEval1234567890ABCDEF",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestGuardianEval1234567890ABCDEF"
+    },
+    {
+      "name": "Execute Guardian AUTO_RESTRICT",
+      "digest": "DryRunDigestGuardianExec1234567890ABCDEFG",
+      "explorer": "https://suiscan.xyz/testnet/tx/DryRunDigestGuardianExec1234567890ABCDEFG"
+    }
+  ],
+  "objects": {
+    "FinancialMandate": "0x0000000000000000000000000000000000000000000000000000000000000002",
+    "FinancialConstitution": "0x0000000000000000000000000000000000000000000000000000000000000004",
+    "MandateVault": "0x0000000000000000000000000000000000000000000000000000000000000005",
+    "ObligationRegistry": "0x0000000000000000000000000000000000000000000000000000000000000006",
+    "GuardianPolicy": "0x0000000000000000000000000000000000000000000000000000000000000007",
+    "LiquidityEngine": "0x0000000000000000000000000000000000000000000000000000000000000008",
+    "TreasuryConfig": "0x0000000000000000000000000000000000000000000000000000000000000009",
+    "DelegationCap": "0x000000000000000000000000000000000000000000000000000000000000000a"
+  },
+  "agent": {
+    "address": "0x00000000000000000000000000000000000000000000000000000000000000ab",
+    "executorCapId": "0x00000000000000000000000000000000000000000000000000000000000000ac"
+  },
+  "guardian": {
+    "actionId": "0x00000000000000000000000000000000000000000000000000000000000000ad",
+    "approvalId": "0x00000000000000000000000000000000000000000000000000000000000000ae",
+    "executeDigest": "DryRunDigestGuardianExec1234567890ABCDEFG"
+  }
+}

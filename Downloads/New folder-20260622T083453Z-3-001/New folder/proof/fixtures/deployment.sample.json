@@ -1,0 +1,9 @@
+{
+  "packageId": "0x0000000000000000000000000000000000000000000000000000000000000001",
+  "digest": "DryRunDigestForSchemaValidationOnly1234567890AB",
+  "governor": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+  "network": "testnet",
+  "publishedAt": "2026-06-19T12:00:00.000Z",
+  "cliVersion": "1.73.1",
+  "protocolVersion": 126
+}

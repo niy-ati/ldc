@@ -1,0 +1,377 @@
+{
+  "generatedAt": "2026-06-21T08:24:47.564Z",
+  "packageId": "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13",
+  "governorBalanceSui": 1.157556396,
+  "walletA": {
+    "owner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e",
+    "mandateId": "0x25f5942ae242acfe4ec7987e5878dd84a8039a604608221ce8d61ff404b348f8",
+    "vaultId": "0xe282d9d0277342eef0646f69ffdff583a0107622416b741da537b9dfdec7a4be",
+    "digest": "8V4umtQuDoK7m3GfaFLhq2PMBBEFDD7RTosdZeEBV5jL",
+    "vaultBalanceMist": "15000000"
+  },
+  "walletB": {
+    "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+    "mandateId": "0x1ec42331d9e6bec266bce0afcdf9c5c8c1324e1dd15c4daf0afe84282fcfbd0c",
+    "vaultId": "0xa35b494937dace036ff8b89fdf34d69ae806d98788b764fc682afdf4b2b83cb7",
+    "digest": "zVcVG2k8X2qUbPPAu3PGDpJ3JfvobRqsFv5fytJQZvq",
+    "vaultBalanceMist": "0"
+  },
+  "isolationOk": true,
+  "evidence": [
+    {
+      "action": "Package Upgrade",
+      "moveFunction": "sui::upgrade",
+      "digest": "6vzEqvHNQWLA6BSTfreiT1YdET5XwSf7XnGkwdN6kGsb",
+      "timestampMs": 1782024152780,
+      "owner": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+      "explorer": "https://suiscan.xyz/testnet/tx/6vzEqvHNQWLA6BSTfreiT1YdET5XwSf7XnGkwdN6kGsb",
+      "objectChanges": 3,
+      "events": 0,
+      "objectIds": {
+        "packageId": "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13",
+        "upgradeCapId": "0x8133621db94776a6f146163d249695f5e6b30fdf7bcd972afd21fce3846d284f",
+        "legacyPackageId": "0x96e72b6e6e5085d98e46b30c7da1c2b0300bcfda51719c6bedff4bff886c3713"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Fund wallet from governor",
+      "moveFunction": "sui::transfer",
+      "digest": "26arjby2trikNNyWJJqAvTCJppqWRDjZ5FThdZ8zV23m",
+      "timestampMs": 1782030235535,
+      "owner": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+      "explorer": "https://suiscan.xyz/testnet/tx/26arjby2trikNNyWJJqAvTCJppqWRDjZ5FThdZ8zV23m",
+      "objectChanges": 3,
+      "events": 0,
+      "objectIds": {
+        "recipient": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Create Treasury — Wallet A",
+      "moveFunction": "treasury_mandate::create + share_all",
+      "digest": "8V4umtQuDoK7m3GfaFLhq2PMBBEFDD7RTosdZeEBV5jL",
+      "timestampMs": 1782030235678,
+      "owner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e",
+      "explorer": "https://suiscan.xyz/testnet/tx/8V4umtQuDoK7m3GfaFLhq2PMBBEFDD7RTosdZeEBV5jL",
+      "objectChanges": 14,
+      "events": 2,
+      "objectIds": {
+        "mandateId": "0x25f5942ae242acfe4ec7987e5878dd84a8039a604608221ce8d61ff404b348f8",
+        "vaultId": "0xe282d9d0277342eef0646f69ffdff583a0107622416b741da537b9dfdec7a4be",
+        "treasuryConfigId": "0x5d7b587af4c1556b33d575d490d7411ace717689e7311bd15dc6c51473891343",
+        "delegationCapId": "0xebe0fb1594e6c844635d4d2038aaadff12541bca1f353d5a1a4d23d95a8000f8",
+        "oracleCapId": "0xa1565773848c2e5841aaf6d4f832d49853730164009db4f301d191ecba87467f",
+        "constitutionOwner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Fund wallet from governor",
+      "moveFunction": "sui::transfer",
+      "digest": "BE1HYTg6RgoJtkgjkWSWF93qPz3J8Kt1taoHwgYutAZ",
+      "timestampMs": 1782030241216,
+      "owner": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+      "explorer": "https://suiscan.xyz/testnet/tx/BE1HYTg6RgoJtkgjkWSWF93qPz3J8Kt1taoHwgYutAZ",
+      "objectChanges": 2,
+      "events": 0,
+      "objectIds": {
+        "recipient": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Create Treasury — Wallet B",
+      "moveFunction": "treasury_mandate::create + share_all",
+      "digest": "zVcVG2k8X2qUbPPAu3PGDpJ3JfvobRqsFv5fytJQZvq",
+      "timestampMs": 1782030241706,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/zVcVG2k8X2qUbPPAu3PGDpJ3JfvobRqsFv5fytJQZvq",
+      "objectChanges": 14,
+      "events": 2,
+      "objectIds": {
+        "mandateId": "0x1ec42331d9e6bec266bce0afcdf9c5c8c1324e1dd15c4daf0afe84282fcfbd0c",
+        "vaultId": "0xa35b494937dace036ff8b89fdf34d69ae806d98788b764fc682afdf4b2b83cb7",
+        "treasuryConfigId": "0xfc5a252704d9f9143667e876c06cda90d832e963a437824e8690ca6deb2bad1b",
+        "delegationCapId": "0xaae63e319f63351d195e06c442371c7c6569b52d13b95ed584c327f2a6029546",
+        "oracleCapId": "0x253ec730f4b88e83005f2d4f58ae895e37f998f17926b2e20777b6b913f0a03e",
+        "constitutionOwner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Fund Treasury",
+      "moveFunction": "treasury_mandate::fund",
+      "digest": "3ge1qdz2V9g3BeqkYBEY18VYQxHK6d9m6WMrGpFFT3VX",
+      "timestampMs": 1782030243993,
+      "owner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e",
+      "explorer": "https://suiscan.xyz/testnet/tx/3ge1qdz2V9g3BeqkYBEY18VYQxHK6d9m6WMrGpFFT3VX",
+      "objectChanges": 2,
+      "events": 1,
+      "objectIds": {
+        "vaultId": "0xe282d9d0277342eef0646f69ffdff583a0107622416b741da537b9dfdec7a4be",
+        "vaultBeforeMist": "0",
+        "vaultAfterMist": "15000000"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Evaluate Guardian",
+      "moveFunction": "guardian::evaluate + share_evaluation",
+      "digest": "4m9S1RhMMbn3DypHUF8Q7QEVYRHvt4GpcmjzohQZv7T7",
+      "timestampMs": 1782030246092,
+      "owner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e",
+      "explorer": "https://suiscan.xyz/testnet/tx/4m9S1RhMMbn3DypHUF8Q7QEVYRHvt4GpcmjzohQZv7T7",
+      "objectChanges": 2,
+      "events": 1,
+      "objectIds": {
+        "guardianPolicyId": "0x225b06686357407eea352b3c9405cb07933b86e49d835a4d8a75fe1c6a62efae"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Create Obligation",
+      "moveFunction": "financial_mandate::register_obligation",
+      "digest": "2pZgo8J3ifK5K2WjKCWK1D7ro6qEcY17Q9SoAgyQsYCJ",
+      "timestampMs": 1782030248310,
+      "owner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e",
+      "explorer": "https://suiscan.xyz/testnet/tx/2pZgo8J3ifK5K2WjKCWK1D7ro6qEcY17Q9SoAgyQsYCJ",
+      "objectChanges": 2,
+      "events": 1,
+      "objectIds": {
+        "obligationsId": "0xbe653154f10ee1df7256bfc030c1d549f7fd03d8970f62f103f782c0776702a5"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Authorize Treasury Payment (PTB)",
+      "moveFunction": "financial_mandate::simulate_and_approve",
+      "digest": "6rzs1ypLteygUQjqw6wv3aR8CTQDy9Vr6HWgB17KKyyN",
+      "timestampMs": 1782030250487,
+      "owner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e",
+      "explorer": "https://suiscan.xyz/testnet/tx/6rzs1ypLteygUQjqw6wv3aR8CTQDy9Vr6HWgB17KKyyN",
+      "objectChanges": 5,
+      "events": 0,
+      "objectIds": {
+        "SimulationApproval": "0xd745e5d9de21ad375a3c39efd98035d392f9a1927907ccbffa66bf8b15c549ad"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Execute Treasury Payment",
+      "moveFunction": "treasury_mandate::treasury_disbursement",
+      "digest": "9JNpcrJUyesEGrqyBdzV1iUVkWymB8K8iddMCnRzcYc9",
+      "timestampMs": 1782030253948,
+      "owner": "0x02bcebcfc7a6a62a5b3c0ebce5da259cd4fdccf4ca994fcf0e21a1cb0eb16e4e",
+      "explorer": "https://suiscan.xyz/testnet/tx/9JNpcrJUyesEGrqyBdzV1iUVkWymB8K8iddMCnRzcYc9",
+      "objectChanges": 14,
+      "events": 2,
+      "objectIds": {
+        "FinancialReceipt": "0x57a9b98d7e35bd7c83bd14c0a5c1475c6d6c932a1f619bf29511a3df87789e2d",
+        "SimulationApproval": "0xd745e5d9de21ad375a3c39efd98035d392f9a1927907ccbffa66bf8b15c549ad",
+        "vaultBeforeMist": "15000000",
+        "vaultAfterMist": "15000000",
+        "recipient": "0x897d602448fa352fb712056abdbfed27b353108962a4cc3db2f56102b38dc0cc"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Create Payroll Mandate",
+      "moveFunction": "payroll_mandate::create + share_all",
+      "digest": "6c5qZUgZkyubbqgmCvv91EximFVAetp41ADGzXVWtroc",
+      "timestampMs": 1782030257504,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/6c5qZUgZkyubbqgmCvv91EximFVAetp41ADGzXVWtroc",
+      "objectChanges": 14,
+      "events": 2,
+      "objectIds": {
+        "mandateId": "0xff04c2abcd77b14bd03d067f7d794e9e9636cefdae84d4261e005397ab955ebb",
+        "vaultId": "0xdd3ed9eaa192f77a52e45f8d30443403e0a17cdaa705da71ff86f611fd539f0c"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Fund Payroll Vault",
+      "moveFunction": "payroll_mandate::fund",
+      "digest": "EkvXDGM8eHvHbE9YLPTh1fGbsTSUNDbBCzVCq3qWmd29",
+      "timestampMs": 1782030259692,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/EkvXDGM8eHvHbE9YLPTh1fGbsTSUNDbBCzVCq3qWmd29",
+      "objectChanges": 2,
+      "events": 1,
+      "objectIds": {
+        "vaultId": "0xdd3ed9eaa192f77a52e45f8d30443403e0a17cdaa705da71ff86f611fd539f0c"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Simulate Payroll",
+      "moveFunction": "financial_mandate::simulate_and_approve",
+      "digest": "9aZw9ZV6zjaZY3Xd6xk2GEX8cTC4TU2SKeQGDFdGwujK",
+      "timestampMs": 1782030261427,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/9aZw9ZV6zjaZY3Xd6xk2GEX8cTC4TU2SKeQGDFdGwujK",
+      "objectChanges": 5,
+      "events": 0,
+      "objectIds": {
+        "SimulationApproval": "0x5cf132f349e9533218dd54e421c74313872c07648da275e7c12fdc81ba9d6a6c"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Execute Payroll",
+      "moveFunction": "payroll_mandate::run_payroll",
+      "digest": "Hm3MRXjJ7fTFTBRnS9jumGn497NM6mpMUJbmKdH5RbiU",
+      "timestampMs": 1782030265042,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/Hm3MRXjJ7fTFTBRnS9jumGn497NM6mpMUJbmKdH5RbiU",
+      "objectChanges": 16,
+      "events": 3,
+      "objectIds": {
+        "employee": "0x15efa659a7fce3c3e00619226e58fff26c10e36238eb74150f106ff8655c320f"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Create Revenue Mandate",
+      "moveFunction": "revenue_allocation_mandate::create + share_all",
+      "digest": "5ubysM95F18JaUARgGrx1xGbQ7G6uqeZDEqf9hCU9dmC",
+      "timestampMs": 1782030266639,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/5ubysM95F18JaUARgGrx1xGbQ7G6uqeZDEqf9hCU9dmC",
+      "objectChanges": 14,
+      "events": 2,
+      "objectIds": {
+        "mandateId": "0xeb6384b64ba9f41eb287154bad93a5c59ab9ffd39dd002eb5bcc6d56bcb09d8d",
+        "vaultId": "0x4a869764222069293d3984a0cdaa0aa831fc94240c8686fb6601b43e2b7c4be3"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Fund Revenue Vault",
+      "moveFunction": "revenue_allocation_mandate::fund",
+      "digest": "G1mZ1aMZHJXtA95Qao4YdQkuF7TQg1ThikYmsZD2vnzW",
+      "timestampMs": 1782030268743,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/G1mZ1aMZHJXtA95Qao4YdQkuF7TQg1ThikYmsZD2vnzW",
+      "objectChanges": 2,
+      "events": 1,
+      "objectIds": {
+        "vaultId": "0x4a869764222069293d3984a0cdaa0aa831fc94240c8686fb6601b43e2b7c4be3"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Simulate Revenue Distribution",
+      "moveFunction": "financial_mandate::simulate_and_approve",
+      "digest": "7vsmSoDmgcmdBtc8ig3T3JRq86EuEYe4RkHtPD6JL1td",
+      "timestampMs": 1782030272718,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/7vsmSoDmgcmdBtc8ig3T3JRq86EuEYe4RkHtPD6JL1td",
+      "objectChanges": 5,
+      "events": 0,
+      "objectIds": {
+        "SimulationApproval": "0xb7e8fde6c265c8d7d6f35d8056dee04d9580bcf58f97184cbc65b07de14e1f6b"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Execute Revenue Distribution",
+      "moveFunction": "revenue_allocation_mandate::distribute",
+      "digest": "6J1b2SGHC65p66hK1QBDYxy4aJfd2UNjMAKtGqHTHR2x",
+      "timestampMs": 1782030274843,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/6J1b2SGHC65p66hK1QBDYxy4aJfd2UNjMAKtGqHTHR2x",
+      "objectChanges": 15,
+      "events": 3,
+      "objectIds": {
+        "revenueRecipient": "0x6a7b26bd074ea5cc0e881f0719bb9adb5fad7b087e041ccf112eda1fa5891339"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Create Investment Mandate",
+      "moveFunction": "auto_investment_mandate::create + share_all",
+      "digest": "EBY5LNhB6zvgV6bPFgcmqAqE31YF17d5CSB4zbGMF462",
+      "timestampMs": 1782030277151,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/EBY5LNhB6zvgV6bPFgcmqAqE31YF17d5CSB4zbGMF462",
+      "objectChanges": 14,
+      "events": 2,
+      "objectIds": {
+        "mandateId": "0xe12e54a8f7f1df68f495bcb24f5745cd54fa25edc4e00b0c174e0b7c57db78f0",
+        "vaultId": "0x77653ad0b771b958b683bee8622a98a861d92980db389a0a0d8e4bed6fd416a2"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Fund Investment Vault",
+      "moveFunction": "auto_investment_mandate::fund",
+      "digest": "DSaHaxfuiyvj2nMjLwXaJtGYyZ1rtJyPJQRqu6BsVuAf",
+      "timestampMs": 1782030280327,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/DSaHaxfuiyvj2nMjLwXaJtGYyZ1rtJyPJQRqu6BsVuAf",
+      "objectChanges": 2,
+      "events": 1,
+      "objectIds": {
+        "vaultId": "0x77653ad0b771b958b683bee8622a98a861d92980db389a0a0d8e4bed6fd416a2"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Simulate Investment",
+      "moveFunction": "financial_mandate::simulate_and_approve",
+      "digest": "91pA73NfZY6r97mvaJuZwncFJq2yhjdDYyVxt6ziJ8ap",
+      "timestampMs": 1782030283995,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/91pA73NfZY6r97mvaJuZwncFJq2yhjdDYyVxt6ziJ8ap",
+      "objectChanges": 5,
+      "events": 0,
+      "objectIds": {
+        "SimulationApproval": "0xcf76aa89dc874f48c4c723e09e294d06897e688294222e2b156a74765c006ab1"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "action": "Execute Investment",
+      "moveFunction": "auto_investment_mandate::execute_investment",
+      "digest": "8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+      "timestampMs": 1782030287280,
+      "owner": "0x70688d823c16186714d0fb5b23678d9876715d27067fc2cd63ffff8cea8e65eb",
+      "explorer": "https://suiscan.xyz/testnet/tx/8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+      "objectChanges": 15,
+      "events": 2,
+      "objectIds": {
+        "investRecipient": "0x8d696b4b1f95bf00291f10680d3e331cc656a636ac2f4747f84704ac11285f83"
+      },
+      "status": "VERIFIED"
+    }
+  ],
+  "riskEngineValidation": {
+    "classification": "CHAIN_VERIFIED",
+    "enforcement": "operational_risk::assess_execution",
+    "abortCode": 20,
+    "abortName": "econcentration_exceeded",
+    "attemptedExposureBps": 9000,
+    "maxAllowedConcentrationBps": 2500,
+    "invalidAmountMist": "9000000",
+    "vaultFundMist": "10000000",
+    "validationMethod": "devInspect",
+    "moveModule": "operational_risk",
+    "status": "failure",
+    "rpcConfirmation": "devInspectTransactionBlock on testnet fullnode — Move VM rejected 90% vault exposure",
+    "note": "Revenue allocation at 90% was rejected by protocol concentration controls (standard_profile max 2500 bps). This is successful risk-control validation, not a protocol defect."
+  },
+  "classifications": {
+    "walletIsolation": "CHAIN_VERIFIED",
+    "obligationLifecycle": "CHAIN_VERIFIED",
+    "programmableMoney": "CHAIN_VERIFIED",
+    "riskEnforcement": "CHAIN_VERIFIED",
+    "payrollWorkflow": "CHAIN_VERIFIED",
+    "revenueWorkflow": "CHAIN_VERIFIED",
+    "investmentWorkflow": "CHAIN_VERIFIED",
+    "guardianWorkflow": "CHAIN_VERIFIED",
+    "uiJudgeDemo": "NOT VERIFIED"
+  }
+}

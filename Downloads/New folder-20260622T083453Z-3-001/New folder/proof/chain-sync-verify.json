@@ -1,0 +1,18 @@
+{
+  "network": "testnet",
+  "wallet": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b",
+  "treasuryObjectId": "0x1202ae2352fdade52fa2dc55b55d8f95e503aa5a565ab03788899eb6d4b054b4",
+  "vaultId": "0x7fb90d43dd3c3d7942db018c1a92e3157348529e32b4ec48a3111e0725a40ca3",
+  "createMandateDigest": "Ai1oDFYUn47hykT5odtzb6aQG5ri8LDELNcDb2VjrjtF",
+  "fundTreasuryDigest": "DQBMFNjjcsjWMVbqaygQ6d5yxEWHB5U7pjZYnp5EJwWk",
+  "obligationIds": [],
+  "objectiveSummary": {
+    "primaryObjective": "preservation",
+    "targetBalanceMist": "10000000000",
+    "minRunwayDays": 90,
+    "reserveCovenantBps": 1000,
+    "complianceScore": 100
+  },
+  "proofCenterRecordId": "Ai1oDFYUn47hykT5odtzb6aQG5ri8LDELNcDb2VjrjtF-template-chain-sync-verify",
+  "chainSync": "ok"
+}

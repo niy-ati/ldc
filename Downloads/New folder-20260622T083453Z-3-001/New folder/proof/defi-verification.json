@@ -1,0 +1,148 @@
+{
+  "generatedAt": "2026-06-21T09:41:25.896Z",
+  "overallClassification": "NOT VERIFIED",
+  "mainnetKeyMissing": true,
+  "mandateosPackageId": "0xab08c97952d7ca39b1cf1f3d773d940f5d56ed8235da65b1c313ddcdec555e13",
+  "naviPackageId": "0x1e4a13a0494d5facdbe8473e74127b838c2d446ecec0ce262e2eddafa77259cb",
+  "verificationPolicy": "CHAIN_VERIFIED requires RPC-validated success digests for every required evidence item. Partial or failed txs remain NOT VERIFIED.",
+  "requirements": {
+    "navi": [
+      "depositDigest",
+      "withdrawDigest",
+      "positionEvidence"
+    ],
+    "scallop": [
+      "depositDigest",
+      "withdrawDigest",
+      "positionEvidence"
+    ],
+    "cetus": [
+      "addLiquidityDigest",
+      "removeLiquidityDigest",
+      "lpPositionEvidence"
+    ],
+    "allocation": [
+      "treasuryAllocationDigest",
+      "destinationProtocolDigests",
+      "portfolioReconciliation"
+    ],
+    "programmableChains": [
+      "completeChainExecution",
+      "allIntermediateDigests",
+      "finalPortfolioState"
+    ],
+    "smartWalletRules": [
+      "packageUpgradeDigest",
+      "ruleCreateDigest",
+      "ruleExecutionDigest",
+      "resultingWorkflowDigest"
+    ]
+  },
+  "features": {
+    "navi": {
+      "classification": "NOT VERIFIED",
+      "blockers": [
+        "MANDATEOS_MAINNET_KEY not set"
+      ]
+    },
+    "scallop": {
+      "classification": "NOT VERIFIED",
+      "blockers": [
+        "MANDATEOS_MAINNET_KEY not set"
+      ]
+    },
+    "cetus": {
+      "classification": "NOT VERIFIED",
+      "blockers": [
+        "MANDATEOS_MAINNET_KEY not set"
+      ]
+    },
+    "allocation": {
+      "classification": "NOT VERIFIED",
+      "blockers": [
+        "MANDATEOS_MAINNET_KEY not set"
+      ]
+    },
+    "programmableChains": {
+      "classification": "NOT VERIFIED",
+      "blockers": [
+        "Mainnet Navi deposit digest missing — chain spans testnet MandateOS + mainnet DeFi",
+        "No single orchestrated programmable chain run with final portfolio snapshot"
+      ],
+      "extra": {
+        "intermediateDigests": {
+          "revenueExecute": {
+            "label": "step",
+            "digest": "6J1b2SGHC65p66hK1QBDYxy4aJfd2UNjMAKtGqHTHR2x",
+            "network": "testnet",
+            "explorer": "https://suiscan.xyz/testnet/tx/6J1b2SGHC65p66hK1QBDYxy4aJfd2UNjMAKtGqHTHR2x",
+            "status": "success",
+            "classification": "CHAIN_VERIFIED"
+          },
+          "investmentExecute": {
+            "label": "step",
+            "digest": "8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+            "network": "testnet",
+            "explorer": "https://suiscan.xyz/testnet/tx/8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+            "status": "success",
+            "classification": "CHAIN_VERIFIED"
+          },
+          "naviDeposit": {
+            "label": "Navi deposit (mainnet leg)",
+            "digest": null,
+            "network": "mainnet",
+            "explorer": null,
+            "status": null,
+            "classification": "NOT VERIFIED",
+            "error": "Not executed"
+          }
+        },
+        "completeChainExecution": false,
+        "finalPortfolioState": "NOT VERIFIED"
+      }
+    },
+    "smartWalletRules": {
+      "classification": "NOT VERIFIED",
+      "blockers": [
+        "Error executing transaction 'Ecx13xVKC8rRmWM2NU5CkbjftcjjtZkmUSDovqZU9YJf': InsufficientGas",
+        "Upgrade on-chain status: failure — InsufficientGas",
+        "smart_wallet_rules module not on-chain — upgrade required before rule creation"
+      ],
+      "extra": {
+        "packageUpgrade": {
+          "label": "Package upgrade (smart_wallet_rules)",
+          "digest": "Ecx13xVKC8rRmWM2NU5CkbjftcjjtZkmUSDovqZU9YJf",
+          "network": "testnet",
+          "explorer": "https://suiscan.xyz/testnet/tx/Ecx13xVKC8rRmWM2NU5CkbjftcjjtZkmUSDovqZU9YJf",
+          "status": "failure",
+          "classification": "NOT VERIFIED"
+        },
+        "ruleCreate": {
+          "label": "Rule create",
+          "digest": null,
+          "network": "testnet",
+          "explorer": null,
+          "status": null,
+          "classification": "NOT VERIFIED"
+        },
+        "ruleExecute": {
+          "label": "Rule execute (proof-linked)",
+          "digest": null,
+          "network": "testnet",
+          "explorer": null,
+          "status": null,
+          "classification": "NOT VERIFIED"
+        },
+        "workflowProof": {
+          "label": "Linked workflow (Execute Investment)",
+          "digest": "8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+          "network": "testnet",
+          "explorer": "https://suiscan.xyz/testnet/tx/8e5wYLdGFmxsKTp4ZmUDwRuYZLbHacSYd5FGoghoCqQo",
+          "status": "success",
+          "classification": "CHAIN_VERIFIED"
+        },
+        "ruleObjectId": null
+      }
+    }
+  }
+}

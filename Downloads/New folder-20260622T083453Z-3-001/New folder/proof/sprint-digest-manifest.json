@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-06-21T07:41:00.000Z",
+  "note": "Fresh v5 sprint session digests (RPC-rebuild source). Investment fund/sim/execute pending one final sprint.",
+  "riskEngineValidation": {
+    "classification": "CHAIN_VERIFIED",
+    "enforcement": "operational_risk::assess_execution",
+    "abortCode": 20,
+    "abortName": "econcentration_exceeded",
+    "attemptedExposureBps": 9000,
+    "maxAllowedConcentrationBps": 2500,
+    "invalidAmountMist": "9000000",
+    "vaultFundMist": "10000000",
+    "validationMethod": "devInspect",
+    "moveModule": "operational_risk",
+    "status": "failure",
+    "rpcConfirmation": "devInspectTransactionBlock on testnet fullnode — Move VM rejected 90% vault exposure",
+    "note": "Revenue allocation at 90% was rejected by protocol concentration controls (standard_profile max 2500 bps). Successful risk-control validation, not a protocol defect."
+  },
+  "walletA": {
+    "owner": "0x94eb77824384140855882b350b4e2ddd6638cfa4513bae59b1ab6d99da13705c",
+    "digest": "DF3rmELrW29bFxRkkpptWWvoq6xe4itNwAjfoinkYhjR"
+  },
+  "walletB": {
+    "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547",
+    "digest": "55atgLs4iZjZKHarcj9WkE6eHhpBGTTEqpz1HKqBMnVU"
+  },
+  "entries": [
+    { "action": "Fund wallet from governor", "moveFunction": "sui::transfer", "digest": "Dz81JomL4PsXFiby8bBk9CRyYbNmX1HEeedPEWHErPc4", "owner": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b" },
+    { "action": "Create Treasury — Wallet A", "moveFunction": "treasury_mandate::create + share_all", "digest": "DF3rmELrW29bFxRkkpptWWvoq6xe4itNwAjfoinkYhjR", "owner": "0x94eb77824384140855882b350b4e2ddd6638cfa4513bae59b1ab6d99da13705c" },
+    { "action": "Fund wallet from governor", "moveFunction": "sui::transfer", "digest": "4tTESnCRhASLiZc3eHQddoenvkoqToQAqce3XUfoaZHh", "owner": "0xd0de6a0cff4368a5cb26d1f13595d3c5e0e46972303020d78c11c6ef77e5e10b" },
+    { "action": "Create Treasury — Wallet B", "moveFunction": "treasury_mandate::create + share_all", "digest": "55atgLs4iZjZKHarcj9WkE6eHhpBGTTEqpz1HKqBMnVU", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Fund Treasury", "moveFunction": "treasury_mandate::fund", "digest": "7xdaqsDcuHr9iCh9tMRoM1xu83kB8X9rigzdDrmrg64z", "owner": "0x94eb77824384140855882b350b4e2ddd6638cfa4513bae59b1ab6d99da13705c" },
+    { "action": "Evaluate Guardian", "moveFunction": "guardian::evaluate + share_evaluation", "digest": "HegHCzVzPW41WP4y2LpPYLWqidH5atZDgpce8ZYSV2j2", "owner": "0x94eb77824384140855882b350b4e2ddd6638cfa4513bae59b1ab6d99da13705c" },
+    { "action": "Create Obligation", "moveFunction": "financial_mandate::register_obligation", "digest": "GeQHf7Lx95Tz5R1L9QJYU3sz2MkHJoAJAZQtmfr3auh6", "owner": "0x94eb77824384140855882b350b4e2ddd6638cfa4513bae59b1ab6d99da13705c" },
+    { "action": "Authorize Treasury Payment (PTB)", "moveFunction": "financial_mandate::simulate_and_approve", "digest": "AB5sKpvxSDFusHyJryvJCm1UFuDKM71QRFsCbtc4dTbV", "owner": "0x94eb77824384140855882b350b4e2ddd6638cfa4513bae59b1ab6d99da13705c" },
+    { "action": "Execute Treasury Payment", "moveFunction": "treasury_mandate::treasury_disbursement", "digest": "DGFzig69dARJfsmoeDkqPKBEg7mYuwGQFpLNqh9zTaj3", "owner": "0x94eb77824384140855882b350b4e2ddd6638cfa4513bae59b1ab6d99da13705c" },
+    { "action": "Create Payroll Mandate", "moveFunction": "payroll_mandate::create + share_all", "digest": "8H864NCCfRP8Hp6uB61bb11NeXwoX75pcsP9xFFBahwo", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Fund Payroll Vault", "moveFunction": "payroll_mandate::fund", "digest": "BVgyqGo5kZkKRKV3DmHrjStSiEeKxuKD1poysdazgkaL", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Simulate Payroll", "moveFunction": "financial_mandate::simulate_and_approve", "digest": "BBDmTtuHRSTMeoQ6QPfPxhHHafapUmgJP1zm5XGVrNjZ", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Execute Payroll", "moveFunction": "payroll_mandate::run_payroll", "digest": "8FYysTKmGjRhgdYf4vjYQ1yFAdoT218qKtLkthTZDGX4", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Create Revenue Mandate", "moveFunction": "revenue_allocation_mandate::create + share_all", "digest": "9XwcwVjPxQu1win2eFmUdabTbN9de82nLRhvCA2vjDpL", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Fund Revenue Vault", "moveFunction": "revenue_allocation_mandate::fund", "digest": "5xHT2QvDugJmqjLshGMuto4gSDbxjyyNB4eQhjcX7m9y", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Simulate Revenue Distribution", "moveFunction": "financial_mandate::simulate_and_approve", "digest": "9UW3FoA4rJxT1kKiPqRHCqgCBym7Zzk5Y4CfkXLdTuz4", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Execute Revenue Distribution", "moveFunction": "revenue_allocation_mandate::distribute", "digest": "AT1KcT1HtGUntsXayMUuPLvXNYPyqwnacYXp64UxEF8q", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" },
+    { "action": "Create Investment Mandate", "moveFunction": "auto_investment_mandate::create + share_all", "digest": "FW2f1Y1oekSL4HtX4F9ia6Bu9DtctJeraoFsC9iPV6b", "owner": "0xc09ad056d554597abc8125c1e2f3cc89b01d28ae46eedc219e16395bae328547" }
+  ]
+}
