@@ -59,12 +59,23 @@ DComputeCodeGenManager::createComputeTarget(const std::string &s) {
 #endif
   }
 
+  if (s.substr(0, 5) == "dxil-") {
+#define DXIL_VALID_VER_INIT 660
+    const std::array<int, 1> valid_dxil_versions = {{DXIL_VALID_VER_INIT}};
+
+    const int v = atoi(s.c_str() + 5);
+    if (std::find(valid_dxil_versions.begin(), valid_dxil_versions.end(), v) !=
+        valid_dxil_versions.end()) {
+      return createDXILTarget(ctx, v);
+    }
+  }
+
 #define STR(...) #__VA_ARGS__
 #define XSTR(x) STR(x)
 
   error(Loc(),
-        "Unrecognised or invalid DCompute targets: the format is ocl-xy0 "
-        "for OpenCl x.y and cuda-xy0 for CUDA CC x.y."
+        "Unrecognised or invalid DCompute targets: the format is ocl-xy0, "
+        "cuda-xy0, or dxil-xy0."
 #if LDC_LLVM_SUPPORTED_TARGET_SPIRV
         " Valid version strings for OpenCl are ocl-{" XSTR(OCL_VALID_VER_INIT) "}."
 #endif
