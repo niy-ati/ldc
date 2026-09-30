@@ -52,12 +52,37 @@ struct DComputePointerRewrite : ABIRewrite {
       gIR->ir->CreateCall(assignFn->getFunctionType(), assignFn,
                           {v, mdVal, llvm::ConstantInt::get(llvm::Type::getInt32Ty(gIR->context()), realAS)});
     }
-    
-    DtoStore(v, field);
+    if (gIR && gIR->dcomputetarget &&
+        gIR->dcomputetarget->target == DComputeTarget::ID::DirectX) {
+      // For DXIL Bindless, `v` is an i32 heap index. We must resolve it to a pointer.
+      auto ptrOpt = toDcomputePointer(static_cast<TypeStruct *>(dty)->sym);
+      llvm::Type *elemTy = DtoType(ptrOpt->type);
+      
+      // 1. Get the handle from the heap index
+      llvm::Function *getHandleFn = llvm::Intrinsic::getOrInsertDeclaration(
+          &gIR->module, llvm::Intrinsic::dx_resource_handlefromheap, {llvm::Type::getInt32Ty(gIR->context())});
+      llvm::Value *handle = gIR->ir->CreateCall(getHandleFn->getFunctionType(), getHandleFn, {v}, "dxil.handle");
+      
+      // 2. Get the actual pointer from the handle
+      llvm::Function *getPtrFn = llvm::Intrinsic::getOrInsertDeclaration(
+          &gIR->module, llvm::Intrinsic::dx_resource_getpointer, {handle->getType()});
+      llvm::Value *realPtr = gIR->ir->CreateCall(getPtrFn->getFunctionType(), getPtrFn, {handle}, "dxil.ptr");
+      
+      // Store the real pointer in the struct field so the rest of D code works normally
+      DtoStore(realPtr, field);
+    } else {
+      DtoStore(v, field);
+    }
     return mem;
   }
 
   LLType *type(Type *t) override {
+    if (gIR && gIR->dcomputetarget &&
+        gIR->dcomputetarget->target == DComputeTarget::ID::DirectX) {
+      // For DXIL Bindless, pointers are passed as 32-bit indices into the heap
+      return llvm::Type::getInt32Ty(gIR->context());
+    }
+
     auto ptrOpt = toDcomputePointer(static_cast<TypeStruct *>(t)->sym);
     assert(ptrOpt && "DComputePointerRewrite expects ldc.dcompute.Pointer");
     return ptrOpt->toLLVMType(true);
