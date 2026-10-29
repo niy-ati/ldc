@@ -1,0 +1,77 @@
+name: Test the #21891 union-compat fix
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: niy-ati/dmd
+          ref: fix-21891-union-compat
+          path: dmd-src
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - uses: dlang-community/setup-dlang@v1
+        with:
+          compiler: dmd-latest
+
+      - name: Build patched dmd from source
+        shell: bash
+        run: |
+          cd dmd-src
+          make -j$(nproc) MODEL=64 HOST_DMD=dmd ENABLE_RELEASE=1 ENABLE_ASSERTS=1 dmd
+
+      - name: Case 1 - sljit's real union scenario, should now succeed
+        shell: bash
+        run: |
+          DMD=$(cygpath -w "$GITHUB_WORKSPACE/dmd-src/generated/windows/release/64/dmd.exe")
+          mkdir -p case1 && cd case1
+          cat > main_union.c << 'EOF'
+          union executable_code {
+              void* code;
+              long (*func)(long a);
+          };
+          EOF
+          cat > test_union.c << 'EOF'
+          union executable_code {
+              void* code;
+              long (*func0)(void);
+              long (*func1)(long a);
+              long (*func2)(long a, long b);
+              long (*func3)(long a, long b, long c);
+          };
+          EOF
+          "$DMD" -m64 -c main_union.c test_union.c
+          echo "case1 exit=$?  (expect 0 - same size/alignment, should now compile)"
+
+      - name: Case 2 - genuinely different union size, must still error
+        shell: bash
+        run: |
+          DMD=$(cygpath -w "$GITHUB_WORKSPACE/dmd-src/generated/windows/release/64/dmd.exe")
+          mkdir -p case2 && cd case2
+          cat > a.c << 'EOF'
+          union U { int x; };
+          EOF
+          cat > b.c << 'EOF'
+          union U { long long x; };
+          EOF
+          "$DMD" -m64 -c a.c b.c
+          echo "case2 exit=$?  (expect nonzero - different size, must still error)"
+
+      - name: Case 3 - struct, same size+alignment but different field type, must still error
+        shell: bash
+        run: |
+          DMD=$(cygpath -w "$GITHUB_WORKSPACE/dmd-src/generated/windows/release/64/dmd.exe")
+          mkdir -p case3 && cd case3
+          cat > a.c << 'EOF'
+          struct S { long long a; };
+          EOF
+          cat > b.c << 'EOF'
+          struct S { void* a; };
+          EOF
+          "$DMD" -m64 -c a.c b.c
+          echo "case3 exit=$?  (expect nonzero - structs unaffected, field type must still match)"
